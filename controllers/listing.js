@@ -69,7 +69,7 @@ module.exports.detail = async (req, res) => {
         }
 
         // Filter out reviews with missing authors
-        detail.reviews = detail.reviews.filter((review) => review.author);
+        detail.recentReviews = detail.recentReviews.filter((recentReviews) => recentReviews.author);
 
         const ownerExists = detail.owner !== null;
 
