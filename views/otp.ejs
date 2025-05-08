@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification</title>
+    <style>
+        :root {
+            --primary-color: #FF385C;
+            --primary-hover: #E61E4D;
+            --secondary-color: #6c757d;
+            --secondary-hover: #5a6268;
+            --text-color: #333;
+            --light-gray: #f4f4f9;
+            --border-color: #e0e0e0;
+            --success-color: #28a745;
+            --error-color: #dc3545;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--light-gray);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            line-height: 1.6;
+            color: var(--text-color);
+        }
+        
+        .otp-container {
+            background: #fff;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            width: 100%;
+            max-width: 420px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .otp-container:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+        }
+        
+        .otp-container h1 {
+            margin-bottom: 1.5rem;
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        
+        .message {
+            margin-bottom: 1.5rem;
+            padding: 0.75rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+        
+        .error-message {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--error-color);
+            border-left: 4px solid var(--error-color);
+        }
+        
+        .otp-container form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+        
+        .otp-container input[type="text"] {
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            text-align: center;
+            letter-spacing: 0.5rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .otp-container input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 56, 92, 0.2);
+        }
+        
+        .otp-container button {
+            padding: 0.75rem;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        
+        .verify-button {
+            background-color: var(--primary-color);
+        }
+        
+        .verify-button:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        .resend-button {
+            background-color: var(--secondary-color);
+        }
+        
+        .resend-button:hover {
+            background-color: var(--secondary-hover);
+        }
+        
+        .otp-container button:active {
+            transform: scale(0.98);
+        }
+        
+        @media (max-width: 480px) {
+            .otp-container {
+                padding: 1.5rem;
+                margin: 0 1rem;
+            }
+            
+            .otp-container input[type="text"] {
+                letter-spacing: 0.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="otp-container">
+        <h1>Verify OTP</h1>
+
+        <div class="message <% if (message) { %>error-message<% } %>">
+            <% if (message) { %>
+                <p id="review-message"><%= message %></p>
+            <% } %>
+        </div>
+
+        <form action="/api/verify-otp?id=<%= userData._id %>" method="POST">
+            <input type="text" name="otp" placeholder="Enter OTP" required maxlength="6" pattern="\d{6}" title="Please enter a 6-digit OTP">
+            <button type="submit" class="verify-button">Verify</button>
+        </form>
+        
+        <form action="/api/resend-otp?id=<%= userData._id %>" method="POST">
+            <button type="submit" class="resend-button">Resend OTP</button>
+        </form>
+    </div>
+
+    <script>
+        setTimeout(() => {
+            const msg = document.querySelector('#otp-message');
+            if (msg) {
+                msg.style.opacity = '0';
+                setTimeout(() => {
+                    msg.parentElement.style.display = 'none';
+                }, 300);
+            }
+        }, 3000);
+        
+        if (window.location.search.includes('message=')) {
+            const url = new URL(window.location);
+            url.searchParams.delete('message');
+            window.history.replaceState({}, document.title, url.pathname);
+        }
+        
+        // Auto-focus the OTP input on page load
+        document.querySelector('input[name="otp"]').focus();
+    </script>
+</body>
+</html>

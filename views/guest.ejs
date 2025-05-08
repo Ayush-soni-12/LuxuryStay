@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<style>
+    /* Base Styles */
+.profile-header {
+  display: flex;
+  align-items: center;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
+}
+
+.profile-avatar {
+  position: relative;
+  margin-right: 2rem;
+}
+
+.profile-avatar img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.edit-avatar {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #ff5a5f;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.profile-info h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.member-since {
+  color: #767676;
+  margin: 0.5rem 0;
+}
+
+.verification-badge {
+  display: flex;
+  align-items: center;
+  color: #008489;
+}
+
+.verified-icon {
+  margin-right: 0.5rem;
+  font-weight: bold;
+}
+
+/* Profile Sections */
+.profile-section {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.5rem;
+}
+
+.section-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.edit-btn {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.25rem 0.75rem;
+  cursor: pointer;
+}
+
+/* Host Status Section */
+.host-status {
+  background: #f7f7f7;
+}
+
+#become-host-btn {
+  margin: 1rem 0;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+}
+
+.host-benefits {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.host-benefits h3 {
+  margin-top: 0;
+}
+
+.host-benefits ul {
+  padding-left: 1.5rem;
+}
+
+/* Host Stats (when user is already a host) */
+.host-stats {
+  display: flex;
+  gap: 2rem;
+  margin: 1rem 0;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ff5a5f;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #767676;
+}
+
+/* Buttons */
+.primary-btn {
+  background: #ff5a5f;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.secondary-btn {
+  background: white;
+  color: #ff5a5f;
+  border: 1px solid #ff5a5f;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+
+/* Modal Styles */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  margin: 0;
+}
+
+.close-modal {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+/* Form Styles */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.form-group textarea {
+  min-height: 100px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+/* Host Steps */
+.host-steps {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.step {
+  flex: 1;
+  text-align: center;
+  position: relative;
+}
+
+.step:not(:last-child):after {
+  content: "";
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  right: -50%;
+  height: 2px;
+  background: #ddd;
+  z-index: 1;
+}
+
+.step-number {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  border-radius: 50%;
+  background: #ddd;
+  color: white;
+  position: relative;
+  z-index: 2;
+}
+
+.step.active .step-number {
+  background: #ff5a5f;
+}
+
+.step-title {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.requirements-list {
+  padding-left: 1.5rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+</style>
+
+
+<body>
+    
+    <div class="profile-header">
+        <div class="profile-avatar">
+          <img src="user-avatar.jpg" alt="User Profile Picture">
+          <button class="edit-avatar">Edit Photo</button>
+        </div>
+        <div class="profile-info">
+          <h1>John Doe</h1>
+          <p class="member-since">Member since March 2023</p>
+          <div class="verification-badge">
+            <span class="verified-icon">✓</span>
+            <span>Verified Profile</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-content">
+        <!-- About Section -->
+        <section class="profile-section">
+          <div class="section-header">
+            <h2>About</h2>
+            <button class="edit-btn">Edit</button>
+          </div>
+          <div class="section-content">
+            <p>Hi! I'm John, a travel enthusiast who loves exploring new cultures. When I'm not traveling, I enjoy hosting guests in my properties.</p>
+          </div>
+        </section>
+      
+        <!-- Contact Information -->
+        <section class="profile-section">
+          <div class="section-header">
+            <h2>Contact Information</h2>
+            <button class="edit-btn">Edit</button>
+          </div>
+          <div class="section-content">
+            <div class="contact-item">
+              <span class="contact-label">Email:</span>
+              <span class="contact-value">john.doe@example.com</span>
+            </div>
+            <div class="contact-item">
+              <span class="contact-label">Phone:</span>
+              <span class="contact-value">+1 (555) 123-4567</span>
+            </div>
+          </div>
+        </section>
+      
+        <!-- Host Status Section -->
+        <section class="profile-section host-status">
+          <div class="section-header">
+            <h2>Hosting Status</h2>
+          </div>
+          <div class="section-content">
+            <p>You are currently registered as a guest.</p>
+            <button id="become-host-btn" class="primary-btn">Become a Host</button>
+            <div class="host-benefits">
+              <h3>Benefits of becoming a host:</h3>
+              <ul>
+                <li>List your properties for rent</li>
+                <li>Earn money from your unused space</li>
+                <li>Connect with travelers worldwide</li>
+                <li>Access host support and resources</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+      
+        <!-- If user is already a host -->
+        <!-- <section class="profile-section host-status">
+          <div class="section-header">
+            <h2>Host Dashboard</h2>
+          </div>
+          <div class="section-content">
+            <p>You are currently registered as a host.</p>
+            <div class="host-stats">
+              <div class="stat-item">
+                <span class="stat-number">5</span>
+                <span class="stat-label">Listings</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">4.8</span>
+                <span class="stat-label">Average Rating</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">42</span>
+                <span class="stat-label">Total Bookings</span>
+              </div>
+            </div>
+            <button class="secondary-btn">Manage Listings</button>
+            <button class="secondary-btn">Add New Listing</button>
+          </div>
+        </section> -->
+      </div>
+
+      <div id="edit-profile-modal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Edit Profile</h2>
+            <button class="close-modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <form id="edit-profile-form">
+              <div class="form-group">
+                <label for="first-name">First Name</label>
+                <input type="text" id="first-name" value="John">
+              </div>
+              <div class="form-group">
+                <label for="last-name">Last Name</label>
+                <input type="text" id="last-name" value="Doe">
+              </div>
+              <div class="form-group">
+                <label for="about">About</label>
+                <textarea id="about">Hi! I'm John, a travel enthusiast who loves exploring new cultures...</textarea>
+              </div>
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" value="john.doe@example.com">
+              </div>
+              <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" value="+1 (555) 123-4567">
+              </div>
+              <div class="form-actions">
+                <button type="button" class="secondary-btn">Cancel</button>
+                <button type="submit" class="primary-btn">Save Changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div id="become-host-modal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Become a Luxrystay Host</h2>
+            <button class="close-modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="host-steps">
+              <div class="step active">
+                <span class="step-number">1</span>
+                <span class="step-title">Host Requirements</span>
+              </div>
+              <div class="step">
+                <span class="step-number">2</span>
+                <span class="step-title">Property Details</span>
+              </div>
+              <div class="step">
+                <span class="step-number">3</span>
+                <span class="step-title">Verification</span>
+              </div>
+            </div>
+            
+            <div class="step-content">
+              <h3>Host Requirements</h3>
+              <p>To become a Luxrystay host, you'll need to meet these requirements:</p>
+              <ul class="requirements-list">
+                <li>Valid government-issued ID</li>
+                <li>Proof of property ownership or authorization to rent</li>
+                <li>Bank account for receiving payments</li>
+                <li>Agreement to Luxrystay's Host Terms and Conditions</li>
+              </ul>
+              
+              <div class="form-group">
+                <input type="checkbox" id="agree-terms">
+                <label for="agree-terms">I agree to the Luxrystay Host Terms and Conditions</label>
+              </div>
+            </div>
+            
+            <div class="modal-actions">
+              <button type="button" class="secondary-btn">Cancel</button>
+              <button type="button" class="primary-btn">Continue</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+<script>
+    // Edit Profile Modal
+const editButtons = document.querySelectorAll('.edit-btn');
+const editModal = document.getElementById('edit-profile-modal');
+const closeEditModal = editModal.querySelector('.close-modal');
+const cancelEditBtn = editModal.querySelector('.secondary-btn');
+
+editButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    editModal.style.display = 'flex';
+  });
+});
+
+closeEditModal.addEventListener('click', () => {
+  editModal.style.display = 'none';
+});
+
+cancelEditBtn.addEventListener('click', () => {
+  editModal.style.display = 'none';
+});
+
+// Become Host Modal
+const becomeHostBtn = document.getElementById('become-host-btn');
+const hostModal = document.getElementById('become-host-modal');
+const closeHostModal = hostModal.querySelector('.close-modal');
+
+becomeHostBtn.addEventListener('click', () => {
+  hostModal.style.display = 'flex';
+});
+
+closeHostModal.addEventListener('click', () => {
+  hostModal.style.display = 'none';
+});
+
+// Close modals when clicking outside
+window.addEventListener('click', (e) => {
+  if (e.target === editModal) {
+    editModal.style.display = 'none';
+  }
+  if (e.target === hostModal) {
+    hostModal.style.display = 'none';
+  }
+});
+
+// Form submission
+document.getElementById('edit-profile-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  // Here you would handle the form submission to update the profile
+  // For example:
+  // const formData = new FormData(e.target);
+  // Send to server...
+  
+  // Then close the modal
+  editModal.style.display = 'none';
+  // And update the profile display
+});
+</script>
+
+
+</body>
+</html>

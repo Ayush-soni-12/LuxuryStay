@@ -1,0 +1,57 @@
+
+
+            
+<%- include('partials/header') %>
+
+        <div class="auth-container">
+            <h1 class="auth-heading">Sign Up</h1>
+            
+            <div class="message" style="text-align: center;">
+                <% if (message) { %>
+                    <p id="review-message" style="color: red"><%= message %></p>
+                <% } %>
+            </div>
+            
+            <form class="auth-form needs-validation" action="/api/signup" method="post" novalidate>
+                <div class="form-group">
+                    <label for="name">Username</label>
+                    <input type="text" class="input form-control" id="name" name="name" required>
+                    <div class="valid-feedback">Looks good!</div>
+                    <div class="invalid-feedback">Please choose a username</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" class="input form-control" id="email" name="email" required>
+                    <div class="invalid-feedback">Please provide a valid email</div>
+                </div>
+                <div class="form-group">
+                    <label for="Phone_No">Phone_No</label>
+                    <input type="text" class="input form-control" id="Phone_No" name="Phone_No" required>
+                    <div class="invalid-feedback">Please provide a valid Phone_No</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="input form-control" id="password" name="password" required>
+                    <div class="invalid-feedback">Please create a password</div>
+                </div>
+
+                <div class="login" style="text-align: center; margin-top: 1rem;">
+                    <p>Already have an account? <a href="/api/login" class="text-secondary" style="font-weight: bold; text-decoration: none;">Login</a></p>
+                </div>
+
+                <div class="submit-container">
+                    <button type="submit" class="btn-17">
+                        <span class="text-container">
+                            <span class="text">Create Account</span>
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <%- include('partials/footer') %>
+   
+
+     

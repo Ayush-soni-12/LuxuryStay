@@ -1,0 +1,718 @@
+ 
+    
+<%- include('partials/header') %>
+
+
+
+<style>
+    /* Booking Section Styles */
+    .booking-section {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        margin: 30px 0;
+        border: 1px solid #ebebeb;
+    }
+    
+    .booking-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .price-per-night {
+        font-size: 22px;
+        font-weight: 600;
+    }
+    
+    .price-period {
+        font-size: 14px;
+        color: #717171;
+    }
+    
+    .booking-form {
+        display: grid;
+        gap: 15px;
+    }
+    
+    .date-picker {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+    
+    .date-input {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 12px;
+        width: 100%;
+    }
+    
+    .guests-select {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 12px;
+        width: 100%;
+    }
+    
+    .booking-summary {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #ebebeb;
+    }
+    
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+    
+    .total-row {
+        font-weight: 600;
+        font-size: 18px;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #ebebeb;
+    }
+    
+    .book-now-btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 15px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 20px;
+        transition: all 0.2s;
+    }
+    
+    .book-now-btn:hover {
+        background: #e61e4d;
+    }
+    
+    /* Modal styles for booking confirmation */
+    .booking-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .modal-content {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        max-width: 500px;
+        width: 90%;
+        text-align: center;
+    }
+    
+    .modal-close {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        margin-top: 20px;
+        cursor: pointer;
+    }
+
+
+  .property-gallery {
+    margin: 0 auto;
+    max-width: 1200px;
+    padding: 0 20px;
+  }
+  
+  .gallery-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 8px;
+    height: 500px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .main-image {
+    grid-row: span 2;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .secondary-images {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  
+  .secondary-image {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .last-image {
+    position: relative;
+  }
+  
+  .gallery-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .gallery-img:hover {
+    transform: scale(1.03);
+  }
+  
+  .image-overlay {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+  }
+  
+  .view-all-btn {
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+  }
+  
+  .view-all-btn:hover {
+    background: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .more-images-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  @media (max-width: 768px) {
+    .gallery-container {
+      grid-template-columns: 1fr;
+      grid-template-rows: 300px 150px 150px;
+      height: auto;
+    }
+    
+    .main-image {
+      grid-row: 1;
+    }
+    
+    .secondary-images {
+      grid-row: 2 / span 2;
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+  }
+
+
+
+  .unavailable-date {
+        color: #ff4d4f; /* Red color to indicate unavailability */
+        font-weight: bold;
+        background-color: #ffe6e6; /* Light red background */
+        padding: 8px;
+        border-radius: 5px;
+        margin-bottom: 5px;
+        list-style: none;
+    }
+
+    .unavailable-date:hover {
+        background-color: #ffcccc; /* Slightly darker red on hover */
+        cursor: not-allowed; /* Show not-allowed cursor */
+    }
+    .date {
+      width: 100vw;
+      text-align: center;
+      margin-top: 15px;
+      margin-bottom: 15px;
+
+    }
+</style>
+
+
+<!-- Property Header -->
+<div class="property-header">
+    <% if (message) { %>
+        <div id="review-message" class="alert alert-success">
+                <p id="review-message" style="color:green"><%= message %></p>
+        </div>
+        <% } %>
+        </div>
+     
+
+
+
+
+          <div class="property-gallery">
+            <div class="gallery-container">
+              <% const [mainImg, ...otherImgs] = detail.image.slice(0,5); %>
+              
+              <!-- Main featured image (larger) -->
+              <div class="main-image">
+                <img src="<%= mainImg.url %>" alt="<%= detail.title %>" class="gallery-img">
+                <div class="image-overlay">
+                  <button class="view-all-btn">View all photos</button>
+                </div>
+              </div>
+              
+              <!-- Secondary images grid -->
+              <div class="secondary-images">
+                <% otherImgs.forEach((img, index) => { %>
+                  <div class="secondary-image <%= index === otherImgs.length - 1 ? 'last-image' : '' %>">
+                    <img src="<%= img.url %>" alt="<%= detail.title %>" class="gallery-img">
+                    <% if (index === otherImgs.length - 1 && detail.image.length > 5) { %>
+                      <div class="more-images-overlay">
+                        +<%= detail.image.length - 5 %> more
+                      </div>
+                    <% } %>
+                  </div>
+                <% }); %>
+              </div>
+            </div>
+          </div>
+
+
+
+
+<!-- Property Details -->
+<div class="property-details">
+    <div class="detail-card">
+        <% if (ownerExists) { %>
+            <p>Owner: <%= detail.owner.name %></p>
+        <% } else { %>
+            <p>Owner: <em>Unknown (User deleted)</em></p>
+        <% } %>
+        <h1 class="display-4 mb-4"><%= detail.title %></h1>
+        <p class="lead"><%= detail.description %></p>
+        <div class="price-tag">₹<%= detail.price.toLocaleString("en-IN") %>/night</div>
+        <div class="d-flex align-items-center gap-2 mb-4">
+            <i class="fa-solid fa-location-dot text-danger"></i>
+            <span><%= detail.location %>, <%= detail.country %></span>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+     <% if(currentUser &&detail.owner && currentUser._id.toString() === detail.owner._id.toString()){ %>
+    <div class="action-buttons">
+        <a href="/show/<%= detail._id %>/edit" class="edit-button">
+            <svg class="svgIcon" viewBox="0 0 512 512" width="24" height="24">
+                <path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1v32c0 8.8 7.2 16 16 16h32zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"></path>
+            </svg>
+        </a>
+        <form id="submit" action="/show/<%= detail._id %>/<%=detail.location%>?_method=DELETE" method="POST" class="delete-button">
+            <button class="button">          
+                        <svg viewBox="0 0 448 512" width="24" height="24">
+                <path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"></path>
+            </svg>
+          </button>
+
+        </form>
+    </div>
+  <%  }%>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+<!--  booking details  -->
+
+
+
+  <!-- Add this new booking section -->
+  <div class="booking-section">
+    <div class="booking-header">
+        <div>
+            <span class="price-per-night">₹<%= detail.price.toLocaleString("en-IN") %></span>
+            <span class="price-period"> per night</span>
+        </div>
+        <div class="rating">
+            <i class="fas fa-star"></i>
+            <span>4.8 (24 reviews)</span>
+        </div>
+    </div>
+    
+    <form  action="/api/booking/<%=detail._id%>" method="post"  id="bookingForm" class="booking-form"  >
+      <input type="hidden" id="totalInput" name="total" value=""> 
+      <div class="date-picker">
+            <div>
+                <label for="checkin">Check-in</label>
+                <input type="date" id="checkin" class="date-input" name="checkin" required>
+            </div>
+            <div>
+                <label for="checkout">Check-out</label>
+                <input type="date" id="checkout" class="date-input" name="checkout" required>
+            </div>
+        </div>
+        
+        <div>
+            <label for="guests">Guests</label>
+            <select id="guests" class="guests-select" name="guests" required>
+                <option value="1">1 guest</option>
+                <option value="2" selected>2 guests</option>
+                <option value="3">3 guests</option>
+                <option value="4">4 guests</option>
+                <option value="5">5 guests</option>
+                <option value="6">6 guests</option>
+            </select>
+        </div>
+        
+        <div class="booking-summary">
+            <div class="summary-row">
+                <span>₹<%= detail.price.toLocaleString("en-IN") %> x <span id="nights">1</span> nights</span>
+                <span id="basePrice">₹<%= detail.price.toLocaleString("en-IN") %></span>
+            </div>
+            <div class="summary-row">
+                <span>Cleaning fee</span>
+                <span>₹500</span>
+            </div>
+            <div class="summary-row">
+                <span>Service fee</span>
+                <span>₹300</span>
+            </div>
+            <div class="total-row">
+                <span>Total</span>
+                <span id="totalPrice">₹<%= (detail.price + 800).toLocaleString("en-IN") %></span>
+            </div>
+        </div>
+        
+        <% if(currentUser) { %>
+          <button type="submit" class="book-now-btn">Book Now</button>
+          <button type="button" id="cancelBookingBtn" class="book-now-btn" style="display: none;">Cancel</button>
+      <% } else { %>
+          <a href="/api/login" class="book-now-btn" style="text-decoration: none; display: block;">Login to Book</a>
+      <% } %>
+    </form>
+
+
+
+    <div class="date">
+      <h2>Unavailable Dates</h2>
+      <ul id="booked-dates-list"></ul>
+  </div>
+       <!-- PayPal Button -->
+
+</div>
+<!-- </div> -->
+
+
+
+ 
+
+
+
+
+<div style="border: 1px solid #ccc; border-radius: 10px; overflow: hidden; margin-top: 10px;">
+  <div id="map" style="width: 100%; height: 400px;"></div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Review Section -->
+
+<div class="review-section">
+    <% if(currentUser){ %>
+    <div class="review-form">
+       
+        <h2 class="mb-4">Leave a Review</h2>
+        <form class="needs-validation" action="/show/<%= detail._id %>/reviews" method="post" novalidate>
+            <div class="mb-4">
+                <label class="form-label">Rating:</label>
+                <div class="rating-container">
+                    <fieldset class="starability-slot">
+                        <legend>First rating:</legend>
+                        <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
+                        <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+                        <label for="first-rate1" title="Terrible">1 star</label>
+                        <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+                        <label for="first-rate2" title="Not good">2 stars</label>
+                        <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+                        <label for="first-rate3" title="Average">3 stars</label>
+                        <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+                        <label for="first-rate4" title="Very good">4 stars</label>
+                        <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+                        <label for="first-rate5" title="Amazing">5 stars</label>
+                      </fieldset>
+                   
+            </div>
+            <div class="mb-4">
+                <label for="comment" class="form-label">Comment:</label>
+                <textarea class="form-control" name="review[comment]" id="comment" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary px-5 py-2">
+                Submit Review <i class="fa-solid fa-arrow-right ms-2"></i>
+            </button>
+        </form>
+   
+    </div>
+    <% } %>
+
+    <h2 class="my-5">Guest Reviews</h2>
+    <div class="review-grid">
+        <% for (let review of detail.recentReviews) { %>
+            <div class="review-card">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h5 class="mb-1"><%=review.author ? review.author.name : 'Anonymous' %></h5>
+                        <div class="rating-stars">
+                            <p class="starability-result" data-rating="<%= review.rating %>">
+                              
+                              </p>
+                        </div>
+                        <p class="text-muted" style="font-size: 12px;">
+                          Reviewed on <%= new Date(review.createdAt).toLocaleDateString() %>
+                      </p>
+                    </div>
+                    <% if(currentUser  && review.author && currentUser._id.toString()===review.author._id.toString()){ %>
+                    <form method="post" action="/show/<%=detail._id%>/reviews/<%= review._id%>?_method=DELETE">
+                        <button type="submit" class="btn btn-link text-danger p-0">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </form>
+                    <% } %>
+           
+                </div>
+                <p class="text-muted"><%= review.comment %></p>
+              
+            </div>
+        <% } %>
+    </div>
+</div>
+
+
+
+
+
+
+<div class="booking-modal" id="bookingModal">
+    <div class="modal-content">
+        <i class="fas fa-check-circle" style="font-size: 50px; color: var(--primary); margin-bottom: 20px;"></i>
+        <h2>Booking Confirmed!</h2>
+        <p>Your stay at <strong><%= detail.title %></strong> has been successfully booked.</p>
+        <p>A confirmation has been sent to your email.</p>
+        <button class="modal-close" id="modalClose">Close</button>
+    </div>
+</div>
+
+
+
+  
+<%- include('partials/footer') %>
+<script async
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCarHW4XK2XEoEHf7dDjxYzVhDAhaIkaRA&callback=initMap">
+</script>
+<script src="https://www.paypal.com/sdk/js?client-id=AevjHRPaxM0OPf9Vc23QLP08I1uzMKiax5wGqdRmFM6P05gn6teHgRYIubuq9ofL5YMgYfpxPO4MeO9u&components=buttons"></script>
+
+
+<script>
+
+
+// map functionality
+
+
+
+function initMap() {
+    const geocoder = new google.maps.Geocoder();
+  const address = "<%= detail ? detail.location + ', ' + detail.country : '' %>";
+
+  if (!address.trim()) {
+    console.error('Address is not defined');
+    return;
+  }
+
+    geocoder.geocode({ address: address }, function(results, status) {
+      if (status === 'OK') {
+        const map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 12,
+          center: results[0].geometry.location
+        });
+
+        const marker = new google.maps.Marker({
+          map: map,
+          position: results[0].geometry.location
+        });
+      } else {
+        console.error('Geocode was not successful for the following reason: ' + status);
+      }
+    });
+  }
+
+
+
+
+
+
+
+
+
+
+
+    // Booking functionality
+    document.addEventListener('DOMContentLoaded',  async function() {
+        const bookingForm = document.getElementById('bookingForm');
+        const checkinInput = document.getElementById('checkin');
+        const checkoutInput = document.getElementById('checkout');
+        const guestsSelect = document.getElementById('guests');
+        const nightsSpan = document.getElementById('nights');
+        const basePriceSpan = document.getElementById('basePrice');
+        const totalPriceSpan = document.getElementById('totalPrice');
+        const totalInput = document.getElementById('totalInput');
+        const bookingModal = document.getElementById('bookingModal');
+        const modalClose = document.getElementById('modalClose');
+        
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        checkinInput.min = today;
+        
+        // Update checkout min date when checkin changes
+        checkinInput.addEventListener('change', function() {
+            checkoutInput.min = this.value;
+            calculateTotal();
+        });
+        
+        checkoutInput.addEventListener('change', calculateTotal);
+        guestsSelect.addEventListener('change', calculateTotal);
+        
+        function calculateTotal() {
+            if (checkinInput.value && checkoutInput.value) {
+                const checkin = new Date(checkinInput.value);
+                const checkout = new Date(checkoutInput.value);
+                const nights = Math.ceil((checkout - checkin) / (1000 * 60 * 60 * 24));
+                
+                if (nights > 0) {
+                    nightsSpan.textContent = nights;
+                        const basePrice = parseFloat("<%= detail.price || 0 %>") * nights;
+            
+                    const total = basePrice + 800; // 800 is cleaning + service fee
+                    
+                    basePriceSpan.textContent = '₹' + basePrice.toLocaleString('en-IN');
+                    totalPriceSpan.textContent = '₹' + total.toLocaleString('en-IN');
+                    totalInput.value = total.toFixed(2);
+                  
+                  
+
+                  }
+            }
+        }
+
+
+
+
+        bookingForm.addEventListener('submit', function (e) {
+        if (!totalInput.value) {
+            e.preventDefault();
+            alert('Please select valid dates to calculate the total.');
+        }
+    });
+
+
+
+
+
+    const listingId = "<%=detail._id%>";
+    const response = await fetch(`/api/listing/${listingId}/booked-dates`);
+    const data = await response.json();
+   
+
+
+    if (data.success) {
+
+            const bookedDates = data.bookedDates;
+        
+
+            // Display booked dates
+            const bookedDatesList = document.getElementById("booked-dates-list");
+            bookedDates.forEach((booking) => {
+                const listItem = document.createElement("li");
+                listItem.textContent = `From ${new Date(booking.checkin).toISOString().split("T")[0]} to ${new Date(booking.checkout).toISOString().split("T")[0]}`;
+                listItem.classList.add("unavailable-date"); // Add a class for styling
+                bookedDatesList.appendChild(listItem);
+            });
+        }
+
+
+
+        
+        // Handle form submission
+        // if (bookingForm) {
+        //     bookingForm.addEventListener('submit', function(e) {
+        //         e.preventDefault();
+                
+        //         // In a real app, you would send this data to your server
+        //         const bookingData = {
+        //               propertyId: '<%= detail._id %>',
+        //             checkin: checkinInput.value,
+        //             checkout: checkoutInput.value,
+        //             guests: guestsSelect.value,
+        //             total: totalPriceSpan.textContent.replace('₹', '').replace(/,/g, '')
+        //         };
+                
+        //         console.log('Booking data:', bookingData);
+                
+        //         // Show confirmation modal
+        //         bookingModal.style.display = 'flex';
+        //     });
+        // }
+        
+        // Close modal
+        // modalClose.addEventListener('click', function() {
+        //     bookingModal.style.display = 'none';
+        // });
+        
+        // // Close modal when clicking outside
+        // window.addEventListener('click', function(e) {
+        //     if (e.target === bookingModal) {
+        //         bookingModal.style.display = 'none';
+        //     }
+        // });
+    });
+</script>
+</body>
+</html>
+
+

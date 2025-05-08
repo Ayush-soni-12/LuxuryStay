@@ -1,0 +1,87 @@
+<%- include('partials/header') %>
+
+</head>
+<body>
+
+
+    <main class="cancel-booking-container">
+        <div class="cancel-booking-card">
+            <h1>Cancel Your Bookings</h1>
+    
+            <% Object.values(groupedBookings).forEach((group) => { %>
+                <div class="listing-section">
+                    <div class="property-info">
+                        <h2><%= group.listing.title %></h2>
+                        <p><i class="fas fa-map-marker-alt"></i> <%= group.listing.location %></p>
+                    </div>
+    
+                    <% group.bookings.forEach((booking) => { %>
+                        <div class="booking-details">
+                            <div class="property-image">
+                                <img src="<%= group.listing.image[0].url %>" alt="Property image">
+                            </div>
+                            <div class="booking-info">
+                                <p><strong>Check-in:</strong> <%= new Date(booking.checkin).toISOString().split("T")[0] %></p>
+                                <p><strong>Check-out:</strong> <%= new Date(booking.checkout).toISOString().split("T")[0] %></p>
+                                <p class="total-price">Total: ₹<%= booking.total.toFixed(2) %></p>
+                            </div>
+                            <form action="/api/booking/<%= booking._id %>/cancel" method="POST">
+                                <button type="submit" class="primary-button cancel-button">Cancel This Booking</button>
+                            </form>
+                        </div>
+                    <% }) %>
+                </div>
+            <% }) %>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <!-- <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Confirm cancellation button
+            const confirmCancelBtn = document.getElementById('confirm-cancel');
+            
+            confirmCancelBtn.addEventListener('click', function() {
+                // Validate that a reason was selected
+                const reasonSelect = document.getElementById('cancel-reason');
+                if (!reasonSelect.value) {
+                    alert('Please select a reason for cancellation');
+                    return;
+                }
+                
+                // Confirm with the user
+                if (confirm('Are you sure you want to cancel this booking?')) {
+                    // Prepare cancellation data
+                    const cancellationData = {
+                        bookingId: '',
+                        reason: reasonSelect.value,
+                        notes: document.getElementById('additional-notes').value
+                    };
+                    
+                    // Send cancellation request to server
+                    fetch('/bookings//cancel', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(cancellationData)
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Cancellation failed');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        alert('Your booking has been successfully canceled. Your refund will be processed shortly.');
+                        window.location.href = '/bookings'; // Redirect to bookings page
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('There was an error processing your cancellation. Please try again.');
+                    });
+                }
+            });
+        });
+    </script> -->

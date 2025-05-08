@@ -1,0 +1,151 @@
+
+       <%- include('partials/searchBar') %>
+
+    <style>
+
+
+        #filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px; /* Add spacing between filters */
+            justify-content: center; /* Center the filters */
+            margin: 20px 0; /* Add some margin around the filters */
+        }
+    
+        .filter {
+            text-align: center;
+            padding: 10px 20px;
+            border: 2px solid #ddd; /* Add a border */
+            border-radius: 8px; /* Rounded corners */
+            background-color: #f9f9f9; /* Light background */
+            transition: all 0.3s ease; /* Smooth hover effect */
+            cursor: pointer;
+        }
+    
+        .filter a {
+            text-decoration: none; /* Remove underline from links */
+            color: #333; /* Default text color */
+            font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    
+        .filter p{
+            font-size: 8px;
+        }
+        .filter i {
+            font-size: 24px; /* Icon size */
+            margin-bottom: 5px; /* Space between icon and text */
+        }
+    
+        .filter:hover {
+            background-color: #007bff; /* Change background on hover */
+            border-color: #007bff; /* Change border color on hover */
+            color: #fff; /* Change text color on hover */
+        }
+    
+        .filter:hover a {
+            color: #fff; /* Change link text color on hover */
+        }
+
+
+
+    </style>
+    <!-- Main Content -->
+
+
+   
+
+
+
+
+    <div class="listing-container">
+         
+        <% if (message) { %>
+        <div id="review-message" class="alert alert-success " style="margin-top: 15%">
+                <p id="review-message" style="color:green" ><%= message %></p>
+        </div>
+        <% } %>
+   
+        <h1 class="listing-header">Premium Listings</h1>
+        <div id="filters">
+            <div class="filter">
+                <a href="/show/filters/trending">
+                    <i class="fa-solid fa-fire"></i>
+                    <p>Trending</p>
+                </a>
+            </div>
+            <div class="filter">
+                <a href="/show/filters/room">
+                    <i class="fa-solid fa-bed"></i>
+                    <p>Room</p>
+                </a>
+            </div>
+            <div class="filter">
+                <a href="/show/filters/mountain">
+                    <i class="fa-solid fa-mountain-sun"></i>
+                    <p>Mountain</p>
+                </a>
+            </div>
+            <div class="filter">
+                <a href="/show/filters/cities">
+                    <i class="fa-solid fa-city"></i>
+                    <p>Iconic Cities</p>
+                </a>
+            </div>
+            <div class="filter">
+                <a href="/show/filters/">
+                    <i class="fa-brands fa-fort-awesome"></i>
+                    <p>Castles</p>
+                </a>
+            </div>
+            <div class="filter">
+                <a href="/show/filters/pool">
+                    <i class="fa-solid fa-person-swimming"></i>
+                    <p>Amazing Pool</p>
+                </a>
+            </div>
+            <div class="filter">
+                <a href="/show/filters/snow">
+                    <i class="fa-solid fa-snowflake"></i>
+                    <p>Arctic</p>
+                </a>
+            </div>
+            <div class="filter">
+                <a href="/show/filters/camping">
+                    <i class="fa-solid fa-campground"></i>
+                    <p>Camping</p>
+                </a>
+            </div>
+        </div>
+
+         
+        
+        <!-- Swiper -->
+        <div class="swiper-container">
+            <div class="swiper-wrapper">
+                <% datas.forEach(data => { %>
+                <div class="swiper-slide">
+                    <a href="/show/<%= data._id %>/view">
+                        <img src="<%= data.image[0].url%>" alt="<%= data.title %>">
+                    </a>
+                    <div class="slide-content">
+                        <h3><%= data.title %></h3>
+                        <div class="price-tag">$<%= data.price %>/night</div>
+                        <div class="location">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <%= data.location %>, <%= data.country %>
+                        </div>
+                    </div>
+                </div>
+                <% }); %>
+            </div>
+        </div>
+    </div>
+
+    
+<%- include('partials/searchfooter') %>
+
+
+   
