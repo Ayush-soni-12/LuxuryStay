@@ -1,0 +1,5 @@
+node_modules/
+.env
+*.log
+miniProject/logs/
+airnb-jgvt-0d320e410185.json

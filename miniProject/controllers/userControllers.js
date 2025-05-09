@@ -1,5 +1,5 @@
 const User = require("../../Modals/user.js");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const asyncHandler = require("../middlewares/asyncHandler");
 const { sendMail } = require("../Helpers/mailer.js");
 const randomString = require("randomstring");

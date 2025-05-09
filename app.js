@@ -25,14 +25,28 @@ require('./miniProject/Helpers/passport.js');
 /////////////////////////////// DATABASE setup/////////////////////////////////////////////////////////
 
 
-  const Mongoose_Url = "mongodb://127.0.0.1:27017/wanderlust";
-  async function main() {
-    await mongoose.connect(Mongoose_Url);
-    console.log("Connected to MajorProject DB");
-  }
-  main().catch((err) => {
-    console.error(`MajorProject DB connection error: ${err}`);
-  });
+  // const Mongoose_Url = "mongodb://127.0.0.1:27017/wanderlust";
+  // async function main() {
+  //   await mongoose.connect(Mongoose_Url);
+  //   console.log("Connected to MajorProject DB");
+  // }
+  // main().catch((err) => {
+  //   console.error(`MajorProject DB connection error: ${err}`);
+  // });
+
+
+mongoose.set("debug", true); // optional, for logging
+const Mongoose_Url = "mongodb://root:example@mongodb:27017/wanderlust?authSource=admin";
+
+
+async function main() {
+  await mongoose.connect(Mongoose_Url);
+  console.log("✅ Connected to MajorProject DB");
+}
+
+main().catch((err) => {
+  console.error(`❌ MajorProject DB connection error: ${err}`);
+});
   
   /////////////////////////////////////////////// Middleware//////////////////////////////////////////////////////
 

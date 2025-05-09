@@ -1,7 +1,7 @@
 const mongoose =require("mongoose");
 const initData = require("./data.js");
 const Listing = require("../Modals/listing.js");
-const Mongoose_Url ='mongodb://127.0.0.1:27017/wanderlust';
+const Mongoose_Url = "mongodb://root:example@localhost:27017/wanderlust?authSource=admin";
 async function main(){
      await mongoose.connect(Mongoose_Url);   
 }
