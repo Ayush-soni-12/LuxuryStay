@@ -10,139 +10,289 @@
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <!-- <link rel="stylesheet" href="/css/chat.css"> -->
     <link rel="stylesheet" href="/css/<%= cssFile %>">
+            <!-- <link rel="stylesheet" href="/css/responsive.css"> -->
     <style>
+
+
         :root {
-            --primary: #FF385C;
-            --secondary: #008489;
-            --dark: #222222;
-            --light: #f7f7f7;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        /* Sidebar Container */
-        #full {
+    --primary: #FF385C;
+    --secondary: #008489;
+    --dark: #222222;
+    --light: #f7f7f7;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --sidebar-width: 400px;
+}
+
+/* Sidebar Container */
+#full {
     height: 100vh;
-    width: 400px;
-    background-color: rgba(255, 255, 255, 0.7);
+    width: var(--sidebar-width);
+    background-color: rgba(255, 255, 255, 0.85);
     position: fixed;
     z-index: 1000;
     top: 0;
     right: -400px;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px);
     overflow-y: auto;
-    box-shadow: -5px 0px 10px rgba(0, 0, 0, 0.1);
-  }
-        /* Profile Section */
-        .profile {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        
-        .profile i {
-            font-size: 2rem;
-            color: var(--primary);
-        }
-        
-        .profile h1 {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-        
-        /* Navigation Links */
-        .sideBar {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-        
-        .sideBar a {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            color: var(--dark);
-            text-decoration: none;
-            padding: 0.8rem;
-            border-radius: 8px;
-            transition: var(--transition);
-        }
-        
-        .sideBar a:hover {
-            background: rgba(255, 56, 92, 0.1);
-            transform: translateX(5px);
-        }
-        
-        .sideBar h4 {
-            margin: 0;
-            font-weight: 500;
-        }
-        
-        /* Auth Section */
-        .signLogin {
-            border-top: 1px solid #eee;
-            padding-top: 2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .signLogin a {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            color: var(--dark);
-            text-decoration: none;
-            padding: 0.8rem;
-            border-radius: 8px;
-            transition: var(--transition);
-        }
-        
-        .signLogin a:hover {
-            background: rgba(0, 132, 137, 0.1);
-            color: var(--secondary);
-        }
-        
-        /* Additional Features */
-        .host-dashboard {
-            background: rgba(0, 132, 137, 0.05);
-            padding: 1.5rem;
-            border-radius: 12px;
-            margin: 2rem 0;
-        }
-        
-        .progress-bar {
-            height: 6px;
-            background: #eee;
-            border-radius: 3px;
-            margin-top: 1rem;
-        }
-        
-        .progress-fill {
-            width: 75%;
-            height: 100%;
-            background: var(--primary);
-            border-radius: 3px;
-            transition: var(--transition);
-        }
-        
-        .quick-stats {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-        
-        .stat-item {
-            background: rgba(255, 56, 92, 0.05);
-            padding: 1rem;
-            border-radius: 8px;
-            text-align: center;
+    box-shadow: -5px 0px 15px rgba(0, 0, 0, 0.08);
+    padding: 2rem;
+    transition: var(--transition);
+}
+
+
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ff385c;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: difference;
+            transition: transform 0.1s ease;
         }
 
+/* Profile Section */
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    margin-bottom: 2.5rem;
+    padding: 1rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: var(--transition);
+}
+
+.profile:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.profile i {
+    font-size: 2.2rem;
+    color: var(--primary);
+    background: rgba(255, 56, 92, 0.1);
+    padding: 1rem;
+    border-radius: 50%;
+}
+
+.profile h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--dark);
+}
+
+.profile small {
+    color: #666;
+    font-size: 0.8rem;
+}
+
+.progress-bar {
+    height: 6px;
+    background: #f0f0f0;
+    border-radius: 3px;
+    margin: 0.8rem 0;
+    overflow: hidden;
+}
+
+.progress-fill {
+    width: 75%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), #ff5a7f);
+    border-radius: 3px;
+    transition: var(--transition);
+    position: relative;
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, 
+        rgba(255,255,255,0.8) 0%, 
+        rgba(255,255,255,0) 50%, 
+        rgba(255,255,255,0.8) 100%);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Host Dashboard */
+.host-dashboard {
+    background: rgba(0, 132, 137, 0.05);
+    padding: 1.5rem;
+    border-radius: 16px;
+    margin: 2.5rem 0;
+    border: 1px solid rgba(0, 132, 137, 0.1);
+    transition: var(--transition);
+}
+
+.host-dashboard:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 132, 137, 0.1);
+}
+
+.host-dashboard h4 {
+    color: var(--secondary);
+    margin-bottom: 1.2rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.host-dashboard h4::before {
+    content: '';
+    display: block;
+    width: 5px;
+    height: 18px;
+    background: var(--secondary);
+    border-radius: 3px;
+}
+
+.quick-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.stat-item {
+    background: rgba(255, 255, 255, 0.7);
+    padding: 1.2rem;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: var(--transition);
+}
+
+.stat-item:hover {
+    transform: scale(1.03);
+    background: white;
+}
+
+.stat-item h4 {
+    font-size: 1.4rem;
+    color: var(--primary);
+    margin-bottom: 0.3rem;
+    font-weight: 700;
+}
+
+.stat-item small {
+    color: #666;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Navigation Links */
+.sideBar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-bottom: 3rem;
+}
+
+.sideBar a {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    color: var(--dark);
+    text-decoration: none;
+    padding: 1rem 1.2rem;
+    border-radius: 12px;
+    transition: var(--transition);
+    background: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+}
+
+.sideBar a:hover {
+    background: rgba(255, 56, 92, 0.1);
+    transform: translateX(8px);
+    box-shadow: 0 5px 10px rgba(255, 56, 92, 0.1);
+}
+
+.sideBar i {
+    font-size: 1.2rem;
+    width: 24px;
+    text-align: center;
+}
+
+.sideBar h4 {
+    margin: 0;
+    font-weight: 500;
+    font-size: 1.05rem;
+}
+
+/* Auth Section */
+.signLogin {
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    padding-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.signLogin a {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    color: var(--dark);
+    text-decoration: none;
+    padding: 1rem 1.2rem;
+    border-radius: 12px;
+    transition: var(--transition);
+    background: rgba(255, 255, 255, 0.6);
+}
+
+.signLogin a:hover {
+    background: rgba(0, 132, 137, 0.1);
+    color: var(--secondary);
+    transform: translateX(5px);
+}
+
+/* System Status */
+.system-status {
+    margin-top: 2rem;
+    padding: 0.8rem;
+    background: rgba(0, 200, 83, 0.1);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.system-status small {
+    color: #00a152;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.text-success {
+    color: #00a152;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    #full {
+        width: 100%;
+        right: -100%;
+    }
+}
+
+    
 
 
         .ai-logo {
@@ -682,10 +832,14 @@
     <div id="full">
         <!-- Profile Section -->
         <div class="profile">
-          <a href="/show/profile">
+          <a href="/api/profile">
             <i class="fa-regular fa-user"></i>
             <div>
-                <h1>My Profile</h1>
+                          <% if (currentUser) { %>
+                <h1><%= currentUser.name %></h1>
+            <% } else { %>
+                <h1>Guest</h1>
+            <% } %>
               </a>
                 <div class="progress-bar">
                     <div class="progress-fill"></div>
@@ -715,7 +869,7 @@
                 <i class="fa-solid fa-plus"></i>
                 <h4>List Your Property</h4>
             </a>
-            <a href="/show">
+            <a href="/show/property">
                 <i class="fa-solid fa-list"></i>
                 <h4>Your Property</h4>
             </a>
@@ -732,27 +886,29 @@
         
 
 
-        <div class="signLogin">
-        
-            <!-- Show only the logout button if the user is logged in -->
-            <a href="/api/logout">
-              <i class="fa-solid fa-right-to-bracket"></i>
-              <h4>Log Out</h4>
-        
-            </a>
+<div class="signLogin">
+
+      <!-- Show only the logout button if the user is logged in -->
+       <% if(currentUser) { %>
+      <a href="/api/logout">
+        <i class="fa-solid fa-right-to-bracket"></i>
+        <h4>Log Out</h4>
+      </a>
+      <% }else { %>
+
+      <!-- Show login and signup buttons if the user is not logged in -->
+      <a href="/api/signup">
+        <i class="fa-solid fa-user-plus"></i>
+        <h4>Sign up</h4>
     
-            <!-- Show login and signup buttons if the user is not logged in -->
-            <a href="/api/signup">
-              <i class="fa-solid fa-user-plus"></i>
-              <h4>Sign Up</h4>
-          
-            </a>
-            <a href="/api/login">
-              <i class="fa-solid fa-right-to-bracket"></i>
-              <h4>Log In</h4>
-            </a>
-      
-        </div>
+      </a>
+      <a href="/api/login">
+        <i class="fa-solid fa-right-to-bracket"></i>
+        <h4>Log In</h4>
+      </a>
+    <%}%>
+
+  </div>
 
 
 

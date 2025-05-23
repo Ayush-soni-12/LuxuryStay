@@ -1,0 +1,125 @@
+body {
+        background: #f8d7da;
+        font-family: 'Segoe UI', Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    .Error {
+        max-width: 400px;
+        margin: 100px auto 0 auto;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 24px rgba(220,53,69,0.08);
+        padding: 40px 30px;
+        text-align: center;
+        border: 2px solid #f5c2c7;
+    }
+    .Error h1 {
+        color: #dc3545;
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+    }
+    .Error p {
+        color: #333;
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+    }
+    .back-link {
+        display: inline-block;
+        margin-top: 18px;
+        color: #dc3545;
+        text-decoration: none;
+        font-weight: 500;
+        border: 1px solid #dc3545;
+        padding: 8px 18px;
+        border-radius: 6px;
+        transition: background 0.2s, color 0.2s;
+    }
+    .back-link:hover {
+        background: #dc3545;
+        color: #fff;
+    }
+
+
+
+/* Navbar */
+.navbar {
+  padding: 1.5rem 5%;
+  background: white;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.cursor {
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  position:fixed;
+  background-color:black;
+  z-index: 1000;
+  pointer-events: none;
+  text-align: center;
+  font-size: 5px;
+  top: 0px;
+}   
+
+.navbar h4 {
+  color: var(--primary);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+.navbar i{
+  cursor: pointer;
+}
+
+
+
+/* Social Links */
+
+.social-wrapper {
+  position: fixed;
+  bottom: 2rem;
+  left: 2rem;
+  z-index: 1000;
+}
+
+.social-links {
+  position: fixed;
+  bottom: 2rem;
+  left: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  z-index: 1000;
+}
+.social-icon {
+  width: 40px;
+  height: 40px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.5rem 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: var(--transition);
+}
+
+.social-icon:hover {
+  transform: translateY(-3px);
+  background: var(--primary);
+  color: white;
+}
+
+
+@media (max-width: 768px) {
+  .social-links {
+      bottom: 1rem;
+      left: 1rem;
+  }
+}

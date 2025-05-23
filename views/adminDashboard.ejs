@@ -1,0 +1,125 @@
+<%- include('partials/header') %>
+
+<div class="container">
+    <h1>Admin Dashboard</h1>
+    <% if (message) { %>
+    <div class="alert alert-info">
+        <%= message %>
+    </div>
+    <% } %>
+
+    <div class="admin-sections">
+        <!-- Host Applications Section -->
+        <section class="admin-section">
+            <h2>Pending Host Applications</h2>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Application Date</th>
+                            <th>Documents</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% pendingHosts.forEach(host => { %>
+                        <tr>
+                            <td><%= host.name %></td>
+                            <td><%= host.email %></td>
+                            <td><%= new Date(host.hostApplicationDate).toLocaleDateString() %></td>
+                            <td>
+                                <a href="<%= host.hostVerificationDocuments.idProof %>" target="_blank" class="btn btn-sm btn-info">View ID</a>
+                                <a href="<%= host.hostVerificationDocuments.addressProof %>" target="_blank" class="btn btn-sm btn-info">View Address Proof</a>
+                            </td>
+                            <td>
+                                <form action="/api/admin/verify-host/<%= host._id %>" method="POST" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                                </form>
+                                <button type="button" class="btn btn-sm btn-danger" onclick="showRejectModal('<%= host._id %>')">Reject</button>
+                            </td>
+                        </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Rejection Modal -->
+        <div class="modal fade" id="rejectModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Reject Host Application</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form id="rejectForm" action="" method="POST">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="reason">Rejection Reason:</label>
+                                <textarea class="form-control" id="reason" name="reason" required></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-danger">Reject Application</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.admin-sections {
+    margin-top: 2rem;
+}
+
+.admin-section {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.table {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.table th {
+    background-color: #f8f9fa;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    margin: 0 0.2rem;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Bootstrap tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // Function to show reject modal
+    function showRejectModal(hostId) {
+        const rejectModal = document.getElementById('rejectModal');
+        const modal = new bootstrap.Modal(rejectModal);
+        document.getElementById('rejectForm').action = `/api/admin/reject-host/${hostId}`;
+        modal.show();
+    }
+
+    // Make showRejectModal available globally
+    window.showRejectModal = showRejectModal;
+});
+</script>
+
+<%- include('partials/footer') %>

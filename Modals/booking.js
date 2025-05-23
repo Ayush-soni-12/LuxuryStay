@@ -36,18 +36,20 @@ const bookingSchema = new Schema({
     total:{
         type:Number,
         required:true,
-    }
+    },
+
+
+     numberOfRoom: {
+        type: Number,
+        required: true,
+        min: 1, // At least 1 room
+    },
+
 
 
 });
-bookingSchema.index({ listing: 1 });
 
-bookingSchema.index(
-    { listing: 1, checkin: 1, checkout: 1 },
-    { unique: true }
-);
-
-
+bookingSchema.index({ guest: 1 });
 
 const booking = mongoose.model("Booking",bookingSchema);
 module.exports =booking;

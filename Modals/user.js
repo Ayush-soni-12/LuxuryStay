@@ -23,11 +23,33 @@ const userSchema = new mongoose.Schema({
     is_verified:{
         type:Number,
         default:0,
-    },
-        image:{
+    },  
+      image:{
         type:String,
         required:true
     },
+    isHost: {
+        type: Boolean,
+        default: false
+    },
+    hostVerified: {
+        type: Boolean,
+        default: false
+    },
+    hostApplicationDate: {
+        type: Date
+    },
+    hostVerificationDocuments: {
+        idProof: String,
+        addressProof: String
+    },
+    isAdmin: {
+        type: Boolean,
+        default: false
+    },
+    hostRejectionReason: {
+        type: String
+    }
 })
 
 userSchema.index({email:1},{unique:true});

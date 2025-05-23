@@ -3,3 +3,7 @@ node_modules/
 *.log
 miniProject/logs/
 airnb-jgvt-0d320e410185.json
+docker-compose.yml
+dockerfile
+certs/
+mongo-data/

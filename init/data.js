@@ -11,6 +11,8 @@ const sampleListings = [
         }
       ],
       price: 1500,
+      remainingRooms:10,
+      numberOfRooms:10,
       location: "Malibu",
       country: "United States",
     },
@@ -25,6 +27,8 @@ const sampleListings = [
         }
       ],
       price: 1200,
+      remainingRooms:10,
+      numberOfRooms:10,
       location: "New York City",
       country: "United States",
     },
@@ -39,6 +43,8 @@ const sampleListings = [
         }
       ],
       price: 1000,
+      remainingRooms:10,
+      numberOfRooms:10,
       location: "Aspen",
       country: "United States",
     },
@@ -53,6 +59,8 @@ const sampleListings = [
         }
       ],
       price: 2500,
+      remainingRooms:10,
+      numberOfRooms:10,
       location: "Florence",
       country: "Italy",
     },
@@ -67,7 +75,10 @@ const sampleListings = [
         }
       ],
       price: 800,
-      location: "Portland",
+
+remainingRooms:10,
+numberOfRooms:    10,
+  location: "Portland",
       country: "United States",
     },
     {
@@ -81,6 +92,8 @@ const sampleListings = [
         }
       ],
       price: 2000,
+      remainingRooms:10,
+      numberOfRooms:10,
       location: "Cancun",
       country: "Mexico",
     },
@@ -95,7 +108,9 @@ const sampleListings = [
         }
       ],
       price: 900,
-      location: "Lake Tahoe",
+    remainingRooms:10,
+    numberOfRooms:10,
+   location: "Lake Tahoe",
       country: "United States",
     },
     {
@@ -109,6 +124,8 @@ const sampleListings = [
         }
       ],
       price: 3500,
+      remainingRooms:10,
+      numberOfRooms:10,
       location: "Los Angeles",
       country: "United States",
     },
@@ -123,6 +140,8 @@ const sampleListings = [
         }
       ],
       price: 3000,
+      remainingRooms:10,
+      numberOfRooms:10,
       location: "Verbier",
       country: "Switzerland",
     },
@@ -137,6 +156,8 @@ const sampleListings = [
         }
       ],
       price: 4000,
+      remainingRooms:10,
+      numberOfRooms:10,
       location: "Serengeti National Park",
       country: "Tanzania",
     },
@@ -151,6 +172,8 @@ const sampleListings = [
         }
       ],
       price: 1800,
+      remainingRooms:10,
+      numberOfRooms:10,
       location: "Amsterdam",
       country: "Netherlands",
     },
@@ -165,6 +188,8 @@ const sampleListings = [
         }
       ],
       price: 10000,
+      remainingRooms:10,
+      numberOfRooms:10,
       location: "Fiji",
       country: "Fiji",
     },
@@ -179,6 +204,8 @@ const sampleListings = [
         }
       ],
       price: 1200,
+      remainingRooms:10,
+      numberOfRooms:10,
       location: "Cotswolds",
       country: "United Kingdom",
     },
@@ -193,6 +220,8 @@ const sampleListings = [
         }
       ],
       price: 2200,
+      remainingRooms:10,
+      numberOfRooms:10,
       location: "Boston",
       country: "United States",
     },
@@ -207,6 +236,8 @@ const sampleListings = [
         }
       ],
       price: 1800,
+      remainingRooms:10,
+      numberOfRooms:10,
       location: "Bali",
       country: "Indonesia",
     },
@@ -221,6 +252,8 @@ const sampleListings = [
         }
       ],
       price: 1500,
+      remainingRooms:10,
+      numberOfRooms:10,
       location: "Banff",
       country: "Canada",
     },
@@ -235,6 +268,8 @@ const sampleListings = [
         }
       ],
       price: 1600,
+      remainingRooms:10,
+      numberOfRooms:10,
       location: "Miami",
       country: "United States",
     },
@@ -249,6 +284,8 @@ const sampleListings = [
         }
       ],
       price: 3000,
+      remainingRooms:10,
+      numberOfRooms:10,
       location: "Phuket",
       country: "Thailand",
     },
@@ -263,6 +300,8 @@ const sampleListings = [
         }
       ],
       price: 4000,
+      remainingRooms:10,
+      numberOfRooms:10,
       location: "Scottish Highlands",
       country: "United Kingdom",
     },
@@ -277,6 +316,8 @@ const sampleListings = [
         }
       ],
       price: 5000,
+      remainingRooms:10,
+      numberOfRooms:10,
       location: "Dubai",
       country: "United Arab Emirates",
     },
@@ -291,6 +332,8 @@ const sampleListings = [
         }
       ],
       price: 1100,
+      remainingRooms:10,
+      numberOfRooms:10,
       location: "Montana",
       country: "United States",
     },
@@ -305,6 +348,8 @@ const sampleListings = [
         }
       ],
       price: 2500,
+      remainingRooms:10,
+      numberOfRooms:10,
       location: "Mykonos",
       country: "Greece",
     },
@@ -319,7 +364,10 @@ const sampleListings = [
         }
       ],
       price: 750,
-      location: "Costa Rica",
+
+remainingRooms:10,
+numberOfRooms: 10,
+  location: "Costa Rica",
       country: "Costa Rica",
     },
     {
@@ -333,6 +381,8 @@ const sampleListings = [
         }
       ],
       price: 1600,
+      remainingRooms:10,
+      numberOfRooms:10,
       location: "Charleston",
       country: "United States",
     },
@@ -347,6 +397,8 @@ const sampleListings = [
         }
       ],
       price: 2000,
+      remainingRooms:10,
+      numberOfRooms:10,
       location: "Tokyo",
       country: "Japan",
     },
@@ -361,6 +413,8 @@ const sampleListings = [
         }
       ],
       price: 1200,
+      remainingRooms:10,
+      numberOfRooms:10,
       location: "New Hampshire",
       country: "United States",
     },
@@ -375,6 +429,8 @@ const sampleListings = [
         }
       ],
       price: 6000,
+      remainingRooms:10,
+      numberOfRooms:10,
       location: "Maldives",
       country: "Maldives",
     },
@@ -389,6 +445,8 @@ const sampleListings = [
         }
       ],
       price: 4000,
+      remainingRooms:10,
+      numberOfRooms:10,
       location: "Aspen",
       country: "United States",
     },
@@ -403,6 +461,8 @@ const sampleListings = [
         }
       ],
       price: 1800,
+      remainingRooms:10,
+      numberOfRooms:10,
       location: "Costa Rica",
       country: "Costa Rica",
     },

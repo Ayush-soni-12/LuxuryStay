@@ -5,15 +5,12 @@ const listingSchema = Joi.object({
     description: Joi.string().required(),
     location: Joi.string().required(),
     country: Joi.string().required(),
-    price: Joi.number().required().min(0),
+    price: Joi.number().required().min(500).max(1000000), // Price between 500 and 1,000,000
     image: Joi.string().allow("", null),
     category: Joi.string()
     .valid('trending', 'room', 'mountain', 'cities', 'castles', 'pool', 'snow', 'camping')
-    .required()
-    // image: Joi.object({
-    //     url: Joi.string().uri().required(),
-    //     filename: Joi.string().required(),
-    // }).required(),
+    .required(),
+    totalRooms: Joi.number().required().min(10).max(100).required(), // At least 1 room
 });
 
 

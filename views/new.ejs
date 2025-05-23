@@ -1,6 +1,78 @@
+<%- include('partials/header') %>
 
+<% if (!currentUser.isHost || !currentUser.hostVerified) { %>
+    <div class="not-host-message">
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i>
+            <div class="alert-content">
+                <h3>Become a Host to List Properties</h3>
+                <p>You need to be a verified host to create property listings. Complete the host verification process to get started.</p>
+                <a href="/api/profile" class="btn btn-primary mt-3">
+                    <i class="fas fa-user-check"></i> Complete Host Verification
+                </a>
+            </div>
+        </div>
+    </div>
 
-        <%- include('partials/header') %>
+    <style>
+    .not-host-message {
+        max-width: 600px;
+        margin: 3rem auto;
+    }
+
+    .alert {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 2rem;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border: 1px solid #dee2e6;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+    }
+
+    .alert i {
+        font-size: 2rem;
+        color: var(--primary-color);
+    }
+
+    .alert-content h3 {
+        margin: 0 0 0.5rem;
+        color: var(--dark-color);
+    }
+
+    .alert-content p {
+        margin: 0;
+        color: var(--medium-color);
+        font-size: 1.1rem;
+        line-height: 1.5;
+    }
+
+    .btn-primary {
+        background: var(--primary-color);
+        color: white;
+        text-decoration: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s;
+    }
+
+    .btn-primary:hover {
+        background: #e61e4d;
+        transform: translateY(-2px);
+    }
+    </style>
+<% } else { %>
+    <div class="property-header">
+    <% if (message) { %>
+        <div id="review-message" class="alert alert-success">
+                <p id="review-message" style="color:green"><%= message %></p>
+        </div>
+        <% } %>
+        </div>
 
         <div class="form-container">
             <div class="form-heading">
@@ -16,11 +88,22 @@
                         <div class="invalid-feedback">Please provide a title</div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="price">Price</label>
-                        <input type="number" class="input form-control" id="price" name="price" required>
+                        <div class="form-group">
+                        <label for="price">price</label>
+                        <input type="number" class="input form-control" id="price" name="price" required min="500" max="1000000">
                         <div class="invalid-feedback">Please provide a price</div>
                     </div>
+                        
+        
+
+                 <div class="form-group">
+                   <label for="totalRooms">Number of Rooms:</label>
+                   <input type="number" class="input form-control" id="totalRooms" name="totalRooms" min="10" max = "100"  required>
+                  <div class="invalid-feedback">Please provide the number of rooms</div>
+                  </div>
+
+
+
 
                     <div class="form-group">
                         <label for="location">Location</label>
@@ -34,6 +117,9 @@
                         <div class="invalid-feedback">Please provide a country</div>
                     </div>
                 </div>
+
+
+        
 
                 <div class="form-group">
                     <label for="description">Description</label>
@@ -63,6 +149,8 @@
                 </div>
 
 
+                 
+
                 <div class="submit-container">
                     <button type="submit" class="btn-17">
                         <span class="text-container">
@@ -75,5 +163,6 @@
         </div>
 
         <%- include('partials/footer') %>
+        <script src="/js/formValidation.js"></script>
+<% } %>
 
-     

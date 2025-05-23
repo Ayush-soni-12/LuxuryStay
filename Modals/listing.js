@@ -1,6 +1,7 @@
 const mongoose =require("mongoose");
 const Schema = mongoose.Schema;
-const Review = require("./review.js")
+const Review = require("./review.js");
+const { required } = require("joi");
 const listingSchema = new Schema({
     title:{
         type:String,
@@ -26,6 +27,7 @@ const listingSchema = new Schema({
     price:{
         type:Number,
     },
+
     location:{
         type:String,
     },
@@ -38,13 +40,18 @@ const listingSchema = new Schema({
         enum: ['trending', 'room', 'mountain', 'cities', 'castles', 'pool', 'snow', 'camping'], // Allowed categories
       },
 
+  totalRooms: {
+    type: Number,
+    required: true,
+    min: 1
+},
 
-    // reviews:[
-    //     {
-    //         type:Schema.Types.ObjectId,
-    //          ref:"Review",
-    //     }
-    // ],
+bookingCalendar: {
+    type: Map,
+    of: Number, // key: 'YYYY-MM-DD' string, value: remaining rooms
+    default: {},
+},
+
     owner:{
         type:Schema.Types.ObjectId,
         ref:"User"
@@ -61,6 +68,7 @@ const listingSchema = new Schema({
 
 listingSchema.index({location:1});
 listingSchema.index({category:1});
+listingSchema.index({owner:1});
 
 listingSchema.post("findOneAndDelete", async (listing)=>{
    if(listing){

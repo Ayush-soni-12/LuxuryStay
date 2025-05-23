@@ -6,8 +6,9 @@ const wrapAsync = require("../utils/wrapAsync.js");
 const ExpressError = require("../utils/ExpressError.js");
 const { listingSchema } = require("../schema.js");
 const { reviewSchema } = require("../schema.js");
-const validToken = require("../miniProject/middlewares/validateToken.js")
-const {  isOwner, validatelisting } = require("../middleware.js");
+const validToken = require("../miniProject/middlewares/validateToken.js");
+const isVerifiedHost = require("../middleware/isVerifiedHost.js");
+const {  isOwner, validatelisting,enforceFiveImages ,updateFiveImage} = require("../middleware.js");
 const listingcontrollers = require("../controllers/listing.js");
 const multer = require("multer");
 const {storage} = require("../CloudConfig.js");
@@ -16,7 +17,9 @@ router.route("/")
     .get(wrapAsync(listingcontrollers.index))
     .post(
         validToken,
+        isVerifiedHost,
         upload.array('image[]',5),
+        enforceFiveImages,
         validatelisting,
         listingcontrollers.newListing
     );
@@ -49,7 +52,8 @@ router.route("/:id/:location")
     .put(
         validToken,
         isOwner,
-        upload.single('image'),
+         upload.array("image[]", 5),
+        //  updateFiveImage,
         validatelisting,
         wrapAsync(listingcontrollers.updateListing)
     )
@@ -59,10 +63,16 @@ router.route("/:id/:location")
         wrapAsync(listingcontrollers.delete)
     );
 
-router.get("/api",wrapAsync(listingcontrollers.chatbot))
-router.post("/chat",wrapAsync(listingcontrollers.gpt))
+    // .................................. chatBot route ............................
+
+router.get("/api",validToken,wrapAsync(listingcontrollers.chatbot))
+router.post("/chat",validToken,wrapAsync(listingcontrollers.gpt))
+
+// .................................. contact route ............................
 router.get("/contact",wrapAsync(listingcontrollers.contact))
-router.get("/profile",listingcontrollers.profile)
+
+// .................................. show property  route ............................
+router.get("/property",validToken, wrapAsync(listingcontrollers.showProperty))
 
 
 

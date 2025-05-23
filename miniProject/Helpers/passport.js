@@ -1,9 +1,6 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require("../../Modals/user.js");
-
-console.log("✅ passport.js file loaded");
-
 passport.use(new GoogleStrategy({
   clientID: process.env.client_ID,
   clientSecret: process.env.client_Secret,

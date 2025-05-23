@@ -1,168 +1,395 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-
+<%-include("partials/header") %>
 <style>
     /* Base Styles */
+:root {
+  --primary-color: #FF385C;
+  --secondary-color: #008489;
+  --dark-color: #222222;
+  --medium-color: #717171;
+  --light-color: #f7f7f7;
+  --border-color: #ebebeb;
+  --success-color: #00A699;
+  --warning-color: #FFB400;
+  --danger-color: #FF5A5F;
+}
+
+body {
+  font-family: 'Circular', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: #fafafa;
+  color: var(--dark-color);
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Profile Header */
 .profile-header {
   display: flex;
   align-items: center;
-  padding: 2rem;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  margin-bottom: 2rem;
+  padding: 3rem 2rem;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%);
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+  margin: 2rem 0;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.profile-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
 }
 
 .profile-avatar {
   position: relative;
-  margin-right: 2rem;
+  margin-right: 2.5rem;
+  flex-shrink: 0;
 }
 
 .profile-avatar img {
-  width: 120px;
-  height: 120px;
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
   object-fit: cover;
+  border: 4px solid white;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+.profile-avatar:hover img {
+  transform: scale(1.03);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
 }
 
 .edit-avatar {
   position: absolute;
-  bottom: 0;
-  right: 0;
-  background: #ff5a5f;
+  bottom: 10px;
+  right: 10px;
+  background: var(--primary-color);
   color: white;
   border: none;
-  border-radius: 4px;
-  padding: 0.25rem 0.5rem;
-  font-size: 0.8rem;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  transition: all 0.2s ease;
+}
+
+.edit-avatar:hover {
+  background: #e61e4d;
+  transform: translateY(-2px);
+}
+
+.edit-avatar i {
+  font-size: 16px;
+}
+
+.profile-info {
+  flex-grow: 1;
 }
 
 .profile-info h1 {
   margin: 0;
-  font-size: 2rem;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--dark-color);
+  letter-spacing: -0.5px;
 }
 
 .member-since {
-  color: #767676;
+  color: var(--medium-color);
   margin: 0.5rem 0;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+}
+
+.member-since i {
+  margin-right: 8px;
+  color: var(--primary-color);
 }
 
 .verification-badge {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  color: #008489;
+  background-color: rgba(0, 132, 137, 0.1);
+  color: var(--secondary-color);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
 }
 
 .verified-icon {
   margin-right: 0.5rem;
   font-weight: bold;
+  display: inline-flex;
 }
 
-/* Profile Sections */
+/* Profile Sections Grid */
+.profile-sections {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+@media (max-width: 768px) {
+  .profile-sections {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Profile Section Cards */
 .profile-section {
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+  padding: 2rem;
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-color);
+}
+
+.profile-section:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .section-header h2 {
   margin: 0;
   font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--dark-color);
+  display: flex;
+  align-items: center;
+}
+
+.section-header h2 i {
+  margin-right: 12px;
+  color: var(--primary-color);
 }
 
 .edit-btn {
   background: none;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
   cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--medium-color);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.edit-btn i {
+  margin-right: 6px;
+}
+
+.edit-btn:hover {
+  background: var(--light-color);
+  color: var(--dark-color);
+  border-color: var(--medium-color);
+}
+
+.section-content {
+  font-size: 1rem;
+  color: var(--dark-color);
+}
+
+/* Contact Information */
+.contact-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  padding: 0.8rem 0;
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.contact-item:last-child {
+  border-bottom: none;
+}
+
+.contact-label {
+  font-weight: 600;
+  color: var(--medium-color);
+  min-width: 100px;
+  margin-right: 1rem;
+}
+
+.contact-value {
+  color: var(--dark-color);
+  word-break: break-all;
 }
 
 /* Host Status Section */
 .host-status {
-  background: #f7f7f7;
+  background: linear-gradient(135deg, #f8f9fa 0%, #f1f3f5 100%);
+  border-left: 4px solid var(--primary-color);
+}
+
+.host-status .section-header h2 {
+  color: var(--primary-color);
 }
 
 #become-host-btn {
-  margin: 1rem 0;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
+  margin: 1.5rem 0;
+  padding: 0.9rem 2rem;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
 }
 
 .host-benefits {
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid #eee;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
 }
 
 .host-benefits h3 {
   margin-top: 0;
+  color: var(--dark-color);
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
 }
 
 .host-benefits ul {
   padding-left: 1.5rem;
+  list-style-type: none;
+}
+
+.host-benefits li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 0.8rem;
+}
+
+.host-benefits li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--success-color);
+  font-weight: bold;
 }
 
 /* Host Stats (when user is already a host) */
 .host-stats {
-  display: flex;
-  gap: 2rem;
-  margin: 1rem 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1.5rem;
+  margin: 1.5rem 0;
 }
 
 .stat-item {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 3px 15px rgba(0,0,0,0.05);
   text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.stat-item:hover {
+  transform: translateY(-5px);
 }
 
 .stat-number {
   display: block;
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #ff5a5f;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
 }
 
 .stat-label {
-  font-size: 0.9rem;
-  color: #767676;
+  font-size: 0.95rem;
+  color: var(--medium-color);
+  font-weight: 500;
 }
 
 /* Buttons */
 .primary-btn {
-  background: #ff5a5f;
+  background: var(--primary-color);
   color: white;
   border: none;
-  border-radius: 4px;
-  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 10px rgba(255, 90, 95, 0.3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.primary-btn i {
+  margin-right: 8px;
+}
+
+.primary-btn:hover {
+  background: #e61e4d;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 90, 95, 0.4);
+}
+
+.primary-btn:active {
+  transform: translateY(0);
 }
 
 .secondary-btn {
   background: white;
-  color: #ff5a5f;
-  border: 1px solid #ff5a5f;
-  border-radius: 4px;
-  padding: 0.5rem 1rem;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
   cursor: pointer;
-  font-weight: bold;
-  margin-right: 0.5rem;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-right: 0.75rem;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.secondary-btn i {
+  margin-right: 8px;
+}
+
+.secondary-btn:hover {
+  background: rgba(255, 90, 95, 0.05);
+  border-color: #e61e4d;
+  color: #e61e4d;
 }
 
 /* Modal Styles */
@@ -173,366 +400,435 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.5);
+  background-color: rgba(0, 0, 0, 0.5);
   z-index: 1000;
-  align-items: center;
-  justify-content: center;
 }
 
 .modal-content {
-  background: white;
-  border-radius: 8px;
+  position: relative;
+  background-color: #fff;
+  margin: 5% auto;
+  padding: 20px;
   width: 90%;
   max-width: 600px;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal-header {
-  padding: 1.5rem;
-  border-bottom: 1px solid #eee;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.modal-header h2 {
-  margin: 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .close-modal {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  color: var(--medium-color);
   background: none;
   border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
+  padding: 0;
 }
 
-.modal-body {
-  padding: 1.5rem;
+.close-modal:hover {
+  color: var(--dark-color);
 }
 
-/* Form Styles */
-.form-group {
-  margin-bottom: 1rem;
-}
-
-.form-group label {
+/* Form Inputs */
+input[type="file"] {
   display: block;
-  margin-bottom: 0.5rem;
-  font-weight: bold;
-}
-
-.form-group input,
-.form-group textarea {
   width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 2px dashed var(--border-color);
   border-radius: 4px;
+  background: var(--light-color);
 }
 
-.form-group textarea {
-  min-height: 100px;
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 1rem;
-}
-
-/* Host Steps */
-.host-steps {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 2rem;
-}
-
-.step {
-  flex: 1;
-  text-align: center;
-  position: relative;
-}
-
-.step:not(:last-child):after {
-  content: "";
-  position: absolute;
-  top: 15px;
-  left: 50%;
-  right: -50%;
-  height: 2px;
-  background: #ddd;
-  z-index: 1;
-}
-
-.step-number {
-  display: inline-block;
-  width: 30px;
-  height: 30px;
-  line-height: 30px;
-  border-radius: 50%;
-  background: #ddd;
-  color: white;
-  position: relative;
-  z-index: 2;
-}
-
-.step.active .step-number {
-  background: #ff5a5f;
-}
-
-.step-title {
-  display: block;
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-}
-
-.requirements-list {
-  padding-left: 1.5rem;
-}
-
+/* Modal Actions */
 .modal-actions {
   display: flex;
   justify-content: flex-end;
-  margin-top: 2rem;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+}
+
+/* Animation for section loading */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.profile-section {
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+.profile-section:nth-child(1) { animation-delay: 0.1s; }
+.profile-section:nth-child(2) { animation-delay: 0.2s; }
+.profile-section:nth-child(3) { animation-delay: 0.3s; }
+.profile-section:nth-child(4) { animation-delay: 0.4s; }
+
+/* Badges */
+.badge {
+  display: inline-block;
+  padding: 0.35em 0.65em;
+  font-size: 0.75em;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.25rem;
+}
+
+.badge-primary {
+  background-color: var(--primary-color);
+}
+
+.badge-secondary {
+  background-color: var(--secondary-color);
+}
+
+.badge-success {
+  background-color: var(--success-color);
+}
+
+/* Tooltip */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltip-text {
+  visibility: hidden;
+  width: 200px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 0.8rem;
+  font-weight: normal;
+}
+
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
 }
 </style>
 
 
 <body>
     
-    <div class="profile-header">
+    <div class="container">
+      <div class="profile-header">
         <div class="profile-avatar">
-          <img src="user-avatar.jpg" alt="User Profile Picture">
-          <button class="edit-avatar">Edit Photo</button>
+          <img src="<%=userData.image %>" alt="Profile picture of <%= userData.name %>">
+          <form action="/api/updateProfile" >
+            <button type="submit
+            " class="edit-avatar" title="Change profile photo">
+              <i class="fas fa-camera"></i>
+            </button>
+          </form>
         </div>
         <div class="profile-info">
-          <h1>John Doe</h1>
-          <p class="member-since">Member since March 2023</p>
+          <h1><%= userData.name %></h1>
+          <p class="member-since">
+            <i class="far fa-calendar-alt"></i> Member since March 2023
+          </p>
           <div class="verification-badge">
-            <span class="verified-icon">✓</span>
+            <span class="verified-icon"><i class="fas fa-check-circle"></i></span>
             <span>Verified Profile</span>
           </div>
         </div>
       </div>
 
-      <div class="profile-content">
+      <div class="profile-sections">
         <!-- About Section -->
         <section class="profile-section">
           <div class="section-header">
-            <h2>About</h2>
-            <button class="edit-btn">Edit</button>
+            <h2><i class="fas fa-user"></i> About</h2>
           </div>
           <div class="section-content">
-            <p>Hi! I'm John, a travel enthusiast who loves exploring new cultures. When I'm not traveling, I enjoy hosting guests in my properties.</p>
+            <p>Hi! I'm <%= userData.name %>, a travel enthusiast who loves exploring new cultures. When I'm not traveling, I enjoy hosting guests in my properties.</p>
+            <div class="languages mt-3">
+              <h4 class="mb-2"><i class="fas fa-language"></i> Languages</h4>
+              <div class="badge badge-primary mr-2">English</div>
+              <div class="badge badge-secondary">Hindi</div>
+            </div>
           </div>
         </section>
+      
       
         <!-- Contact Information -->
         <section class="profile-section">
           <div class="section-header">
-            <h2>Contact Information</h2>
-            <button class="edit-btn">Edit</button>
+            <h2><i class="fas fa-envelope"></i> Contact Information</h2>
           </div>
           <div class="section-content">
-            <div class="contact-item">
-              <span class="contact-label">Email:</span>
-              <span class="contact-value">john.doe@example.com</span>
-            </div>
-            <div class="contact-item">
-              <span class="contact-label">Phone:</span>
-              <span class="contact-value">+1 (555) 123-4567</span>
+            <div class="contact-list">
+              <div class="contact-item">
+                <span class="contact-label">Email:</span>
+                <span class="contact-value"><%=userData.email %></span>
+              </div>
+              <div class="contact-item">
+                <span class="contact-label">Phone:</span>
+                <span class="contact-value"><%=userData.Phone_No %></span>
+              </div>
+              <div class="contact-item">
+                <span class="contact-label">Address:</span>
+                <span class="contact-value">123 Main St, San Francisco, CA</span>
+              </div>
             </div>
           </div>
-        </section>
-      
-        <!-- Host Status Section -->
+        </section>        <!-- Host Status Section -->
         <section class="profile-section host-status">
           <div class="section-header">
-            <h2>Hosting Status</h2>
+            <h2><i class="fas fa-home"></i> Host Status</h2>
           </div>
           <div class="section-content">
-            <p>You are currently registered as a guest.</p>
-            <button id="become-host-btn" class="primary-btn">Become a Host</button>
+            <% if (!userData.isHost) { %>
+              <p>You're currently not hosting any properties. Become a host to start earning money by sharing your space!</p>          
+                  <button id="become-host-btn" class="primary-btn" onclick="openHostModal()">
+                <i class="fas fa-plus"></i> Start Hosting
+              </button>
+            <% } else if (!userData.hostVerified) { %>
+              <div class="alert alert-info">
+                <i class="fas fa-clock"></i>
+                <div>
+                  <h4>Application Under Review</h4>
+                  <p>We received your host application on <%= new Date(userData.hostApplicationDate).toLocaleDateString() %>. Our team is reviewing your documents and will get back to you within 48 hours.</p>
+                </div>
+              </div>
+            <% } else { %>
+              <div class="host-dashboard-preview">
+                <div class="host-status-verified">
+                  <i class="fas fa-check-circle"></i>
+                  <h4>Verified Host</h4>
+                </div>
+                <div class="host-quick-stats">
+                  <div class="stat-item">                    <span class="stat-label">Properties Listed</span>
+                    <span class="stat-value"><%= userData.listingCount %></span>
+                  </div>
+                  <div class="stat-item">
+                    <span class="stat-label">Total Bookings</span>
+                    <span class="stat-value"><%= userData.bookingCount %></span>
+                  </div>
+                </div>
+                <a href="/show/new" class="primary-btn">
+                  <i class="fas fa-plus"></i> List a New Property
+                </a>
+              </div>
+            <% } %>
+            
             <div class="host-benefits">
-              <h3>Benefits of becoming a host:</h3>
+              <h3><i class="fas fa-star"></i> Host Benefits</h3>
               <ul>
-                <li>List your properties for rent</li>
-                <li>Earn money from your unused space</li>
-                <li>Connect with travelers worldwide</li>
-                <li>Access host support and resources</li>
+                <li>Earn extra income with your property</li>
+                <li>Meet travelers from around the world</li>
+                <li>Get access to host-exclusive perks</li>
+                <li>24/7 customer support</li>
               </ul>
             </div>
           </div>
         </section>
-      
-        <!-- If user is already a host -->
-        <!-- <section class="profile-section host-status">
+
+        <!-- Reviews Section -->
+        <section class="profile-section">
           <div class="section-header">
-            <h2>Host Dashboard</h2>
+            <h2><i class="fas fa-star"></i> Reviews</h2>
+            <span class="badge badge-primary">4.8 ★</span>
           </div>
           <div class="section-content">
-            <p>You are currently registered as a host.</p>
-            <div class="host-stats">
-              <div class="stat-item">
-                <span class="stat-number">5</span>
-                <span class="stat-label">Listings</span>
+            <div class="review-item mb-3">
+              <div class="review-header flex justify-between items-center mb-2">
+                <strong>Alex Johnson</strong>
+                <small class="text-muted">March 2023</small>
               </div>
-              <div class="stat-item">
-                <span class="stat-number">4.8</span>
-                <span class="stat-label">Average Rating</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-number">42</span>
-                <span class="stat-label">Total Bookings</span>
+              <div class="review-content">
+                <div class="stars mb-1">
+                  <i class="fas fa-star text-warning"></i>
+                  <i class="fas fa-star text-warning"></i>
+                  <i class="fas fa-star text-warning"></i>
+                  <i class="fas fa-star text-warning"></i>
+                  <i class="fas fa-star text-warning"></i>
+                </div>
+                <p><%= userData.name %> was a wonderful host! The place was exactly as described and in a great location.</p>
               </div>
             </div>
-            <button class="secondary-btn">Manage Listings</button>
-            <button class="secondary-btn">Add New Listing</button>
+            <button class="secondary-btn">
+              <i class="fas fa-book-open"></i> View All Reviews
+            </button>
           </div>
-        </section> -->
+        </section>
       </div>
+    </div>
 
-      <div id="edit-profile-modal" class="modal">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h2>Edit Profile</h2>
-            <button class="close-modal">&times;</button>
-          </div>
-          <div class="modal-body">
-            <form id="edit-profile-form">
-              <div class="form-group">
-                <label for="first-name">First Name</label>
-                <input type="text" id="first-name" value="John">
-              </div>
-              <div class="form-group">
-                <label for="last-name">Last Name</label>
-                <input type="text" id="last-name" value="Doe">
-              </div>
-              <div class="form-group">
-                <label for="about">About</label>
-                <textarea id="about">Hi! I'm John, a travel enthusiast who loves exploring new cultures...</textarea>
-              </div>
-              <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" value="john.doe@example.com">
-              </div>
-              <div class="form-group">
-                <label for="phone">Phone Number</label>
-                <input type="tel" id="phone" value="+1 (555) 123-4567">
-              </div>
-              <div class="form-actions">
-                <button type="button" class="secondary-btn">Cancel</button>
-                <button type="submit" class="primary-btn">Save Changes</button>
-              </div>
-            </form>
-          </div>
+    <!-- Edit Profile Modal -->
+    <div class="modal" id="editProfileModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Edit Profile</h2>
+          <button class="close-modal">&times;</button>
         </div>
-      </div>
-
-      <div id="become-host-modal" class="modal">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h2>Become a Luxrystay Host</h2>
-            <button class="close-modal">&times;</button>
-          </div>
-          <div class="modal-body">
-            <div class="host-steps">
-              <div class="step active">
-                <span class="step-number">1</span>
-                <span class="step-title">Host Requirements</span>
-              </div>
-              <div class="step">
-                <span class="step-number">2</span>
-                <span class="step-title">Property Details</span>
-              </div>
-              <div class="step">
-                <span class="step-number">3</span>
-                <span class="step-title">Verification</span>
-              </div>
+        <div class="modal-body">
+          <form id="profileForm">
+            <div class="form-group">
+              <label for="name">Full Name</label>
+              <input type="text" id="name" name="name" value="<%= userData.name %>">
             </div>
             
-            <div class="step-content">
-              <h3>Host Requirements</h3>
-              <p>To become a Luxrystay host, you'll need to meet these requirements:</p>
-              <ul class="requirements-list">
-                <li>Valid government-issued ID</li>
-                <li>Proof of property ownership or authorization to rent</li>
-                <li>Bank account for receiving payments</li>
-                <li>Agreement to Luxrystay's Host Terms and Conditions</li>
-              </ul>
-              
-              <div class="form-group">
-                <input type="checkbox" id="agree-terms">
-                <label for="agree-terms">I agree to the Luxrystay Host Terms and Conditions</label>
-              </div>
+            <div class="form-group">
+              <label for="bio">About You</label>
+              <textarea id="bio" name="bio">Hi! I'm <%= userData.name %>, a travel enthusiast who loves exploring new cultures. When I'm not traveling, I enjoy hosting guests in my properties.</textarea>
+            </div>
+            
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input type="tel" id="phone" name="phone" value="<%=userData.Phone_No %>">
             </div>
             
             <div class="modal-actions">
-              <button type="button" class="secondary-btn">Cancel</button>
-              <button type="button" class="primary-btn">Continue</button>
+              <button type="button" class="secondary-btn close-modal">Cancel</button>
+              <button type="submit" class="primary-btn">Save Changes</button>
             </div>
-          </div>
+          </form>
         </div>
       </div>
+    </div>
 
-<script>
-    // Edit Profile Modal
-const editButtons = document.querySelectorAll('.edit-btn');
-const editModal = document.getElementById('edit-profile-modal');
-const closeEditModal = editModal.querySelector('.close-modal');
-const cancelEditBtn = editModal.querySelector('.secondary-btn');
+    <!-- Become Host Modal -->
+    <div class="modal" id="becomeHostModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Become a Host</h2>
+          <button class="close-modal">&times;</button>
+        </div>        <div class="modal-body">
+          <form action="/api/become-host" method="POST" enctype="multipart/form-data" id="hostApplicationForm">
+            <div class="host-steps">
+              <div class="step active">
+                <div class="step-number">1</div>
+                <span class="step-title">Get Started</span>
+              </div>
+              <div class="step">
+                <div class="step-number">2</div>
+                <span class="step-title">Verify Identity</span>
+              </div>
+              <div class="step">
+                <div class="step-number">3</div>
+                <span class="step-title">Submit Documents</span>
+              </div>
+            </div>
+            
+            <h3>Requirements to Become a Host</h3>
+            <ul class="requirements-list">
+              <li>You must be at least 18 years old</li>
+              <li>Have a government-issued ID</li>
+              <li>Agree to our Community Standards</li>
+              <li>Have a bank account for payouts</li>
+            </ul>
 
-editButtons.forEach(button => {
-  button.addEventListener('click', () => {
-    editModal.style.display = 'flex';
-  });
-});
+            <div class="form-group mt-4">
+              <label for="idProof">Government ID Proof (Passport/Driver's License)*</label>
+              <input type="file" id="idProof" name="idProof" accept="image/*,.pdf" required>
+              <small class="text-muted">Upload a clear photo or scan of your ID</small>
+            </div>
 
-closeEditModal.addEventListener('click', () => {
-  editModal.style.display = 'none';
-});
+            <div class="form-group mt-3">
+              <label for="addressProof">Address Proof (Utility Bill/Bank Statement)*</label>
+              <input type="file" id="addressProof" name="addressProof" accept="image/*,.pdf" required>
+              <small class="text-muted">Document should be less than 3 months old</small>
+            </div>
 
-cancelEditBtn.addEventListener('click', () => {
-  editModal.style.display = 'none';
-});
+            <div class="form-check mt-4">
+              <input type="checkbox" id="agreement" required>
+              <label for="agreement">I agree to LuxuryStays's Host Terms and Community Standards</label>
+            </div>
+              <div class="modal-actions">
+              <button type="button" class="secondary-btn close-modal">Cancel</button>
+              <button type="button" class="primary-btn" id="startHostingBtn">
+                <i class="fas fa-check"></i> Submit Application
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
 
-// Become Host Modal
-const becomeHostBtn = document.getElementById('become-host-btn');
-const hostModal = document.getElementById('become-host-modal');
-const closeHostModal = hostModal.querySelector('.close-modal');
+    
 
-becomeHostBtn.addEventListener('click', () => {
-  hostModal.style.display = 'flex';
-});
+<%-include("partials/footer") %>    <script>
+      function openHostModal() {
+        const modal = document.getElementById('becomeHostModal');
+        if (modal) {
+          modal.style.display = 'block';
+        }
+      }
 
-closeHostModal.addEventListener('click', () => {
-  hostModal.style.display = 'none';
-});
-
-// Close modals when clicking outside
-window.addEventListener('click', (e) => {
-  if (e.target === editModal) {
-    editModal.style.display = 'none';
-  }
-  if (e.target === hostModal) {
-    hostModal.style.display = 'none';
-  }
-});
-
-// Form submission
-document.getElementById('edit-profile-form').addEventListener('submit', (e) => {
-  e.preventDefault();
-  // Here you would handle the form submission to update the profile
-  // For example:
-  // const formData = new FormData(e.target);
-  // Send to server...
-  
-  // Then close the modal
-  editModal.style.display = 'none';
-  // And update the profile display
-});
-</script>
-
-
-</body>
+      document.addEventListener('DOMContentLoaded', function() {
+        const hostApplicationForm = document.getElementById('hostApplicationForm');
+        const becomeHostModal = document.getElementById('becomeHostModal');
+        const closeModalBtns = document.querySelectorAll('.close-modal');
+        const startHostingBtn = document.getElementById('startHostingBtn');
+        
+        // Close modal handlers
+        closeModalBtns.forEach(btn => {
+          btn.addEventListener('click', () => {
+            becomeHostModal.style.display = 'none';
+          });
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+          if (e.target === becomeHostModal) {
+            becomeHostModal.style.display = 'none';
+          }
+        });
+        
+        // Handle Start Hosting button click
+        if (startHostingBtn) {
+          startHostingBtn.addEventListener('click', function() {
+            const idProof = document.getElementById('idProof').files[0];
+            const addressProof = document.getElementById('addressProof').files[0];
+            const agreement = document.getElementById('agreement');
+            
+            // Basic validation
+            if (!idProof || !addressProof) {
+              alert('Please upload both ID proof and address proof documents.');
+              return;
+            }
+            
+            if (!agreement.checked) {
+              alert('Please agree to the Host Terms and Community Standards.');
+              return;
+            }
+            
+            // File size validation (max 5MB each)
+            const maxSize = 5 * 1024 * 1024;
+            if (idProof.size > maxSize || addressProof.size > maxSize) {
+              alert('Document files must be less than 5MB each.');
+              return;
+            }
+            
+            // Submit form if validation passes
+            hostApplicationForm.submit();
+          });
+        }
+      });
+    </script>
+  </body>
 </html>

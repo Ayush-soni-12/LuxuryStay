@@ -4,10 +4,7 @@ const router =express.Router();
 
 const { googleAuth,googleOauth} = require("../controllers/userControllers")
 
-
-// router.use(express.json());
-
-
+// Google OAuth routes
 
 router.get("/auth/google",googleAuth)
 router.get("/auth/google/callback",googleOauth)

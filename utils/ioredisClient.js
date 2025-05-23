@@ -4,7 +4,8 @@ const Redis = require('ioredis');
 
 // For local Redis — adjust config for cloud/cluster
 const redis = new Redis({
-  host: 'redis-stack',
+  // host: 'redis',
+  host:"localhost",
   port: 6379,
   // password: 'yourPassword', // if needed
   // retryStrategy: times => Math.min(times * 50, 2000) // optional

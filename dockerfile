@@ -1,20 +1,19 @@
-# Use the official Node.js image as the base image
-FROM node:18
+# Stage 1: Build dependencies
+FROM node:18 AS builder
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
+RUN npm install --production
 
-# Install dependencies
-RUN npm install
+# Stage 2: Copy app and run
+FROM node:18-slim
 
-# Copy the rest of the application code to the working directory
+WORKDIR /app
+
+COPY --from=builder /app/node_modules ./node_modules
 COPY . .
 
-# Expose the port your app runs on
 EXPOSE 8080
 
-# Start the application
 CMD ["node", "app.js"]

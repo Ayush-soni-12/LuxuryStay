@@ -8,12 +8,14 @@ const ExpressError = require("../middlewares/ExpressError");
 const generateToken = require("../Helpers/generateToken.js");
 const path = require("path");
 const { deleteFile } = require("../Helpers/deleteFile.js");
-const logger = require("../utils/logger");
+const {logger} = require("../utils/logger");
 const passport = require('passport');
 const redis = require("../../utils/ioredisClient.js")
 const jwt = require("jsonwebtoken");
 const Listing = require("../../Modals/listing.js");
 const Booking = require("../../Modals/booking.js")
+const { cloudinary } = require("../../CloudConfig");
+const { error } = require("console");
 
 
 
@@ -51,7 +53,7 @@ module.exports.userRegister = asyncHandler(async (req, res) => {
 
     logger.info(`User registered successfully: ${email}`);
      
-    return res.redirect("/show?message="+ encodeURIComponent("mail is sent , Please verify it") );
+    return res.redirect("/show?message="+ encodeURIComponent("Mail is sent , Please verify it") );
 });
 module.exports.userSignup = (req,res)=>{
     res.render("signup.ejs",{cssFile:'signup.css',message:req.query.message||null})
@@ -61,7 +63,7 @@ module.exports.userSignup = (req,res)=>{
 module.exports.mailVerification = asyncHandler(async (req, res) => {
     logger.info(`Mail verification requested for ID: ${req.query.id}`);
     if (!req.query.id) {
-        return res.render("Error", { message: "404 Not found" });
+        return res.render("error.ejs", { message: "404 Not found" });
     }
 
     const userData = await User.findOne({ _id: req.query.id });
@@ -140,27 +142,28 @@ res.redirect("/show?message="+encodeURIComponent("For reset the password, a link
 module.exports.ResetPassword = asyncHandler(async (req, res) => {
     logger.info(`Rendering reset password page for token: ${req.query.token}`);
     if (!req.query.token) {
-        return res.render("Error", { message: "404 Not found" });
+        return res.render("error.ejs", {cssFile:"error.css", message: "404 Not found" });
     }
 
     const resetData = await PasswordReset.findOne({ token: req.query.token });
     if (!resetData) {
         logger.error(`ResetPassword: Invalid token: ${req.query.token}`,{userEmail:email});
-        return res.render("Error", { message: "404 not found" });
+        return res.render("error.ejs", { cssFile:"error.css" ,message: "404 not found" });
     }
 
-    return res.render("ResetPassword", { resetData});
+    return res.render("ResetPassword", { resetData,message:req.query.message||null });
 });
 
 module.exports.updatePassword = asyncHandler(async (req, res) => {
     const { user_id, password, confirmPassword } = req.body;
     logger.info(`Updating password for user ID: ${user_id}`);
-    const data = await PasswordReset.findOne({ user_id });
+    const resetData = await PasswordReset.findOne({ user_id });
 
-    if (password != confirmPassword) {
-        logger.warn(`Password mismatch for user ID: ${user_id}`);
-        return res.render("ResetPassword", { message: 'Password not match with confirm password' });
-    }
+if (password != confirmPassword) {
+    logger.warn(`Password mismatch for user ID: ${user_id}`);
+    const token = resetData ? resetData.token : "";
+    return res.redirect("/ResetPassword?token=" + token + "&message=" + encodeURIComponent("Password and confirm password do not match"));
+}
 
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(password, salt);
@@ -181,10 +184,8 @@ module.exports.loginPage =(req,res)=>{
 
 module.exports.userLogin = asyncHandler(async (req, res) => {
     if (req.cookies.jwt) {
-        return res.status(200).json({
-            success: true,
-            message: "User already logged in",
-        });
+        return res.redirect("/show?message="+encodeURIComponent("You are already logged in"));
+       
     }
 
     const { email, password } = req.body;
@@ -212,9 +213,6 @@ module.exports.userLogin = asyncHandler(async (req, res) => {
 
     redis.set(`otp:${userData._id}`, otp, 'EX', 300);
 
-    // userData.otp = otp;
-    // userData.otpExpires = Date.now() + 5 * 60 * 1000;
-    // await userData.save();
 
     const msg = `<p>Your OTP for login is: <strong>${otp}</strong></p>`;
     await sendMail(email, "Login OTP", msg);
@@ -235,10 +233,6 @@ module.exports.verifyOtp = asyncHandler(async (req, res) => {
         throw new ExpressError("User not found", 404);
     }
 
-    // if (userData.otp !== otp || userData.otpExpires < Date.now()) {
-    //     logger.error(`OTP verification failed: Invalid/Expired OTP for ${userData.email}`,{userEmail:email});
-    //     throw new ExpressError("Invalid or expired OTP", 400);
-    // 
     const storedOtp = await redis.get(`otp:${userData._id}`);
     if(storedOtp===otp){
     const accessToken = generateToken(res, userData._id);
@@ -250,9 +244,6 @@ module.exports.verifyOtp = asyncHandler(async (req, res) => {
     throw new ExpressError("Invalid or expired OTP", 400);
     }
 
-    // userData.otp = null;
-    // userData.otpExpires = null;
-    // await userData.save();
 
 
 });
@@ -270,15 +261,14 @@ module.exports.resendOtp = asyncHandler(async (req, res) => {
     const otp = randomString.generate({ length: 6, charset: "numeric" });
     redis.set(`otp:${userData._id}`, otp, 'EX', 300);
 
-    // userData.otp = otp;
-    // userData.otpExpires = Date.now() + 5 * 60 * 1000;
-    // await userData.save();
+
 
     const msg = `<p>Your new OTP for login is: <strong>${otp}</strong></p>`;
     await sendMail(userData.email, "Resend OTP", msg);
 
     logger.info(`OTP re-sent to ${userData.email}`);
-    res.redirect(`/resend-otp?id=${id}`);
+    // res.redirect(`/resend-otp?id=${id}`);
+    return res.render("otp.ejs", { userData ,message:"OTP is sent to your email"});
 });
 
 module.exports.userProfile = asyncHandler(async (req, res) => {
@@ -287,42 +277,58 @@ module.exports.userProfile = asyncHandler(async (req, res) => {
         logger.error(`Profile fetch failed: User not found`,{userEmail:email});
         throw new ExpressError("User not found", 404);
     }
+
+    // Get listing count for the user
+    const listingCount = await Listing.countDocuments({ owner: userData._id });
+    
+    // Get booking count for the user
+    const bookingCount = await Booking.countDocuments({ guest: userData._id });
+    
+    // Add counts to userData
+    userData.listingCount = listingCount;
+    userData.bookingCount = bookingCount;
+
     logger.info(`Fetching profile for user: ${userData.email}`);
-    return res.status(200).json({
-        success: true,
-        user: userData,
-    });
+    return res.render("guest.ejs", { userData, cssFile: "editProfile.css" });
 });
+module.exports.editProfile  = asyncHandler(async(req,res)=>{
+    const userData = req.user;
+    if(!userData){
+        return res.status(400).rendirect("/api/login?message="+encodeURIComponent("Please login first"))
+    }
+    res.render("editProfile.ejs", { userData, cssFile: "editProfile.css",message:req.query.message||null} );
+})
+
 
 module.exports.updateProfile = asyncHandler(async (req, res) => {
     const { name, phone_No } = req.body;
     const data = { name, phone_No };
     const user_id = req.user._id;
 
-    logger.info(`Updating profile for user: ${req.user.email}`);
+    const oldUser = await User.findById(user_id);
 
-    if (req.file !== undefined) {
-        data.image = `images/${req.file.filename}`;
-        const oldUser = await User.findOne({ _id: user_id });
-        if (oldUser && oldUser.image !== "images/default.png") {
-            const oldFilePath = path.join(__dirname, `../public/${oldUser.image}`);
-            deleteFile(oldFilePath);
+    if (req.file) {
+        // Delete old image from Cloudinary if not default
+        if (oldUser && oldUser.image_id) {
+            await cloudinary.uploader.destroy(oldUser.image_id);
         }
+        data.image = req.file.path; // Cloudinary URL
+        data.image_id = req.file.filename; // Cloudinary public_id
     }
 
     const updatedData = await User.findByIdAndUpdate(user_id, data, { new: true });
     if (!updatedData) {
-        logger.error(`Update profile failed: User not found - ID: ${user_id}`,{userEmail:email});
-        throw new ExpressError("user not found ", 404);
+        logger.error(`Update profile failed: User not found - ID: ${user_id}`, { userEmail: req.user.email });
+        throw new ExpressError("User not found", 404);
     }
 
-    logger.info(`Profile updated for user: ${updatedData.email}`);
-
-    return res.status(200).json({
-        success: true,
-        user: updatedData,
-    });
+    res.redirect("/api/profile?message=" + encodeURIComponent("Profile updated successfully!"));
 });
+
+
+
+
+
 
 module.exports.userLogout = asyncHandler(async (req, res) => {
     const token = req.cookies.jwt;
@@ -347,7 +353,7 @@ module.exports.userLogout = asyncHandler(async (req, res) => {
         sameSite: "strict",
     });
 
-    logger.info(`User logged out: ${req.user?.email || "unknown"}`);
+    logger.info(`User logged out: ${req.user.email || "unknown"}`);
 
     return res.redirect("/show?message=" + encodeURIComponent("Logout successfully!"));
 });
@@ -372,111 +378,126 @@ module.exports.googleOauth = (req, res, next) => {
     })(req, res, next);
 };
 
-module.exports.Booking = asyncHandler(async(req,res)=>{
-  
-    const {listingId}  =req.params
-    const {checkin,checkout,guests,total} = req.body;
-
-    // console.log('Listing ID:', listingId); // Debug log
-    // console.log('Request Body:', req.body); // Debug log
-
-         // Validate the total value
-         if (!total || total <= 0) {
-            return res.status(400).json({ success: false, message: 'Invalid total amount.' });
-        }
-        const listing = await Listing.findById(listingId);
-        if(!listing){
-            return res.status(400).json({
-                success:true,
-                message:"listing not found"
-            })
-        }
 
 
-          // Check if there is an overlapping booking for the same listing
-          const overlappingBooking = await Booking.findOne({
-            listing: listingId,
-            $or: [
-                {
-                    checkin: { $lt: new Date(checkout) },
-                    checkout: { $gt: new Date(checkin) },
-                },
-            ],
-        });
-
-           if (overlappingBooking) {
-
-             return  res.status(400).redirect(`/show/${listingId}/view?message=`+ encodeURIComponent(`This Listing is already booked for the selected dates ${checkin} to ${checkout}` ));    
-
-            }
-
-
-        const bookingNumber = randomString.generate({ length: 6, charset: "numeric" });
-     
-
-        const msg = `
-        <p>Dear ${req.user.name},</p>
-        <p>Thank you for booking with us! Your booking has been successfully confirmed.</p>
-        <p><strong>Booking Details:</strong></p>
-        <ul>
-            <li><strong>Listing:</strong> ${listing.title}</li>
-            <li><strong>Check-in Date:</strong> ${new Date(checkin).toISOString().split("T")[0]}</li>
-            <li><strong>Check-out Date:</strong> ${new Date(checkout).toISOString().split("T")[0]}</li>
-            <li><strong>Guests:</strong> ${guests}</li>
-            <li><strong>Total Amount:</strong> ₹${total}</li>
-            <li><strong> Your Booking number is ${bookingNumber}<strong><li>
-
-        </ul>
-        <p>If you have any questions or need further assistance, feel free to contact us.<a href="http://localhost:8080/show/contact">Contact us<a></p>
-        <p>We look forward to hosting you!</p>
-        <p>Best regards,</p>
-        <p><strong>LuxuryStay</strong></p>
-    `;
-
-
-        await sendMail(req.user.email, "booking verification", msg);
-
-
-
-    
-              // Create a new booking
-              const newBooking = new Booking({
-                listing: listingId,
-                guest: req.user._id, // Assuming user is authenticated
-                checkin: new Date(checkin).toISOString().split("T")[0],
-                checkout: new Date(checkout).toISOString().split("T")[0],
-                guests,
-                total,
-                bookingNumber
-            });
-                     
-
-
-            const savedBooking = await newBooking.save();
-            return res.redirect(`/show/${listingId}/view?message=`+ encodeURIComponent(`Booking confirmed for dates ${checkin} to ${checkout}`));
-})
-
-module.exports.ShowBooking = asyncHandler(async(req,res)=>{
-
-    try {
-        const { id } = req.params;
-
-        // Fetch all bookings for the listing
-        const bookings = await Booking.find({ listing: id }, "checkin checkout");
-
-        // Format the booked dates
-        const bookedDates = bookings.map((booking) => ({
-            checkin: booking.checkin,
-            checkout: booking.checkout,
-        }));
-
-        res.json({ success: true, bookedDates });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ success: false, message: "Failed to fetch booked dates." });
+module.exports.Booking = asyncHandler(async (req, res) => {
+  // Helper function to iterate over dates between startDate (inclusive) and endDate (exclusive)
+  function iterateDates(startDate, endDate, callback) {
+    const date = new Date(startDate);
+    while (date < endDate) {
+      callback(date.toISOString().split("T")[0]);
+      date.setDate(date.getDate() + 1);
     }
+  }
 
-})
+  const { listingId } = req.params;
+  const { checkin, checkout, guests, total, numberOfRoom } = req.body;
+
+  if (!numberOfRoom) {
+return res.redirect(`/show/${listingId}/view?message=` + encodeURIComponent("Please select number of rooms"));
+  }
+
+  if (!total || total <= 0) {
+    return res.status(400).json({ success: false, message: "Invalid total amount." });
+  }
+
+  const listing = await Listing.findById(listingId);
+  if (!listing) {
+return res.redirect(`/show/${listingId}/view?message=` + encodeURIComponent("Listing not found"));
+  }
+
+  const start = new Date(checkin);
+  const end = new Date(checkout);
+
+  // Check availability for each date
+  let isAvailable = true;
+  let unavailableDate = null;
+
+  iterateDates(start, end, (dateStr) => {
+    const remaining = listing.bookingCalendar.get(dateStr) ?? listing.totalRooms;
+    if (remaining < numberOfRoom) {
+      isAvailable = false;
+      unavailableDate = dateStr;
+    }
+  });
+
+  if (!isAvailable) {
+return res.redirect(`/show/${listingId}/view?message=` + encodeURIComponent(`Not enough rooms available on ${unavailableDate}`));
+  }
+
+  // Reserve rooms by updating bookingCalendar
+  iterateDates(start, end, (dateStr) => {
+    const prevRemaining = listing.bookingCalendar.get(dateStr) ?? listing.totalRooms;
+    listing.bookingCalendar.set(dateStr, prevRemaining - numberOfRoom);
+  });
+
+  await listing.save();
+
+  const bookingNumber = randomString.generate({ length: 6, charset: "numeric" });
+
+  const msg = `
+    <p>Dear ${req.user.name},</p>
+    <p>Thank you for booking with us! Your booking has been successfully confirmed.</p>
+    <p><strong>Booking Details:</strong></p>
+    <ul>
+        <li><strong>Listing:</strong> ${listing.title}</li>
+        <li><strong>Number of Rooms:</strong> ${numberOfRoom}</li>
+        <li><strong>Check-in Date:</strong> ${start.toISOString().split("T")[0]}</li>
+        <li><strong>Check-out Date:</strong> ${end.toISOString().split("T")[0]}</li>
+        <li><strong>Guests:</strong> ${guests}</li>
+        <li><strong>Total Amount:</strong> ₹${total}</li>
+        <li><strong>Your Booking Number is ${bookingNumber}</strong></li>
+    </ul>
+    <p>If you have any questions or need further assistance, feel free to contact us. <a href="http://localhost:8080/show/contact">Contact us</a></p>
+    <p>We look forward to hosting you!</p>
+    <p>Best regards,</p>
+    <p><strong>LuxuryStay</strong></p>
+  `;
+
+  await sendMail(req.user.email, "Booking Confirmation", msg);
+
+  // Create and save booking document
+  const newBooking = new Booking({
+    listing: listingId,
+    guest: req.user._id,
+    checkin: start.toISOString().split("T")[0],
+    checkout: end.toISOString().split("T")[0],
+    guests,
+    total,
+    numberOfRoom,
+    bookingNumber,
+  });
+
+  await newBooking.save();
+
+  return res.redirect(
+    `/show/${listingId}/view?message=` +
+      encodeURIComponent(`Booking confirmed for dates ${checkin} to ${checkout}`)
+  );
+});
+
+
+// module.exports.ShowBooking = asyncHandler(async(req,res)=>{
+
+//     try {
+//         const { id } = req.params;
+
+//         // Fetch all bookings for the listing
+//         const bookings = await Booking.find({ listing: id }, "checkin checkout");
+
+//         // Format the booked dates
+//         const bookedDates = bookings.map((booking) => ({
+//             checkin: booking.checkin,
+//             checkout: booking.checkout,
+//         }));
+
+//         res.json({ success: true, bookedDates });
+//     } catch (err) {
+//         console.error(err);
+//         res.status(500).json({ success: false, message: "Failed to fetch booked dates." });
+//     }
+
+// })
 module.exports.CancelBooking = asyncHandler(async (req, res) => {
     const userId = req.user._id; // Assuming the user is authenticated
 
@@ -507,15 +528,181 @@ module.exports.CancelBooking = asyncHandler(async (req, res) => {
 module.exports.BookingCancelConfirm = asyncHandler(async(req,res)=>{
     const { id } = req.params; // Booking ID
 
-    // Find and delete the booking
-    const booking = await Booking.findByIdAndDelete(id);
 
-    if (!booking) {
-        return res.status(404).json({
-            success: false,
-            message: "Booking not found.",
-        });
-    }
+    const booking = await Booking.findById(id).populate("listing");
+  if (!booking) {
+    return res.redirect(`/show?message=` + encodeURIComponent("Booking not found"));
+  }
 
+  const { checkin, checkout, numberOfRoom } = booking;
+  const listing = booking.listing;
+
+  // Restore rooms in bookingCalendar
+  const start = new Date(checkin);
+  const end = new Date(checkout);
+  const current = new Date(start);
+
+  while (current < end) {
+    const dateStr = current.toISOString().split("T")[0];
+    const booked = listing.bookingCalendar.get(dateStr) ?? listing.totalRooms;
+
+    listing.bookingCalendar.set(dateStr, booked + numberOfRoom);
+    current.setDate(current.getDate() + 1);
+  }
+
+  await listing.save();
+    await Booking.findByIdAndDelete(id);
     return res.redirect(`/show?message=` + encodeURIComponent("Booking canceled successfully."));
 })
+module.exports.becomeHost = asyncHandler(async (req, res) => {
+    try {
+        const userId = req.user._id;
+
+        // Check if user is already a host or has a pending application
+        const existingUser = await User.findById(userId);
+        if (existingUser.isHost) {
+            return res.redirect("/api/profile?message=" + encodeURIComponent("You are already a host!"));
+        }
+
+        // Handle file uploads
+        const idProofResult = req.files['idProof'] ? await cloudinary.uploader.upload(req.files['idProof'][0].path, {
+            folder: 'host-documents'
+        }) : null;
+
+        const addressProofResult = req.files['addressProof'] ? await cloudinary.uploader.upload(req.files['addressProof'][0].path, {
+            folder: 'host-documents'
+        }) : null;
+
+        if (!idProofResult || !addressProofResult) {
+            return res.redirect("/api/profile?message=" + encodeURIComponent("Please upload all required documents"));
+        }
+
+        // Update user record
+        const updatedUser = await User.findByIdAndUpdate(userId, {
+            isHost: true,
+            hostVerified: false,
+            hostApplicationDate: new Date(),
+            hostVerificationDocuments: {
+                idProof: idProofResult.secure_url,
+                addressProof: addressProofResult.secure_url
+            }
+        }, { new: true });
+
+        // Send email notification
+        const msg = `
+            <h2>New Host Application</h2>
+            <p>A new host application has been submitted:</p>
+            <ul>
+                <li>Name: ${updatedUser.name}</li>
+                <li>Email: ${updatedUser.email}</li>
+                <li>Application Date: ${new Date().toLocaleString()}</li>
+            </ul>
+        `;
+        
+        // Send confirmation email to user
+        await sendMail(updatedUser.email, "Host Application Received", 
+            `<p>Dear ${updatedUser.name},</p>
+             <p>We have received your host application. Our team will review your documents and get back to you within 48 hours.</p>
+             <p>Thank you for choosing to become a host with us!</p>`
+        );
+
+        // Send notification to admin (you can replace this with your admin email)
+        await sendMail(process.env.ADMIN_EMAIL || "admin@luxurystays.com", "New Host Application", msg);
+
+        logger.info(`Host application submitted for user: ${updatedUser.email}`);
+        return res.redirect("/api/profile?message=" + encodeURIComponent("Your host application has been submitted successfully!"));
+
+    } catch (error) {
+        logger.error(`Host application error: ${error.message}`);
+        return res.redirect("/api/profile?message=" + encodeURIComponent("Error submitting host application. Please try again."));
+    }
+});
+
+module.exports.getHostStatus = asyncHandler(async (req, res) => {
+    const userId = req.user._id;
+    const user = await User.findById(userId);
+    
+    if (!user) {
+        throw new ExpressError("User not found", 404);
+    }
+
+    return res.json({
+        isHost: user.isHost,
+        hostVerified: user.hostVerified,
+        applicationDate: user.hostApplicationDate
+    });
+});
+
+module.exports.getHostApplications = asyncHandler(async (req, res) => {
+    const pendingHosts = await User.find({ 
+        isHost: true, 
+        hostVerified: false 
+    }).select('name email hostApplicationDate hostVerificationDocuments');
+
+    res.render("adminHostApplications.ejs", { 
+        pendingHosts,
+        cssFile: 'adminDashboard.css',
+        message: req.query.message || null 
+    });
+});
+
+module.exports.verifyHost = asyncHandler(async (req, res) => {
+    const { userId } = req.params;
+    const user = await User.findById(userId);
+
+    if (!user) {
+        throw new ExpressError("User not found", 404);
+    }
+
+    user.hostVerified = true;
+    await user.save();
+
+    // Send confirmation email to user
+    const msg = `
+        <h2>Congratulations! You're now a verified host!</h2>
+        <p>Dear ${user.name},</p>
+        <p>Your host application has been approved. You can now start listing your properties on LuxuryStays.</p>
+        <p>Get started by clicking the "List a New Property" button on your dashboard.</p>
+        <p>Best regards,<br>LuxuryStays Team</p>
+    `;
+    
+    await sendMail(user.email, "Host Application Approved!", msg);
+    logger.info(`Host verified: ${user.email}`);
+
+    return res.redirect("/api/admin/host-applications?message=" + encodeURIComponent("Host verified successfully"));
+});
+
+module.exports.rejectHost = asyncHandler(async (req, res) => {
+    const { userId } = req.params;
+    const { reason } = req.body;
+    const user = await User.findById(userId);
+
+    if (!user) {
+        throw new ExpressError("User not found", 404);
+    }
+
+    user.isHost = false;
+    user.hostVerified = false;
+    await user.save();
+
+    // Send rejection email to user
+    const msg = `
+        <h2>Host Application Update</h2>
+        <p>Dear ${user.name},</p>
+        <p>We've reviewed your host application and unfortunately, we cannot approve it at this time.</p>
+        <p><strong>Reason:</strong> ${reason || 'Your application does not meet our current requirements.'}</p>
+        <p>You can apply again after addressing the following:</p>
+        <ul>
+            <li>Ensure all documents are clear and valid</li>
+            <li>Verify your identity and address information</li>
+            <li>Meet all host requirements</li>
+        </ul>
+        <p>If you have any questions, please contact our support team.</p>
+        <p>Best regards,<br>LuxuryStays Team</p>
+    `;
+    
+    await sendMail(user.email, "Host Application Status Update", msg);
+    logger.info(`Host application rejected: ${user.email}`);
+
+    return res.redirect("/api/admin/host-applications?message=" + encodeURIComponent("Host application rejected"));
+});

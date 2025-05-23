@@ -256,6 +256,42 @@
       margin-bottom: 15px;
 
     }
+
+
+.room-info {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.room-info label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+}
+
+.room-info select {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 16px;
+    color: #555;
+    width: 100%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.2s ease-in-out;
+}
+
+.room-info select:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.25);
+}
+
 </style>
 
 
@@ -320,6 +356,9 @@
         </div>
     </div>
 
+        </div>
+    </div>
+
     <!-- Action Buttons -->
      <% if(currentUser &&detail.owner && currentUser._id.toString() === detail.owner._id.toString()){ %>
     <div class="action-buttons">
@@ -380,10 +419,10 @@
             </div>
         </div>
         
-        <div>
+        <div class="room-info">
             <label for="guests">Guests</label>
             <select id="guests" class="guests-select" name="guests" required>
-                <option value="1">1 guest</option>
+                <option value="1">1 guest</optioin>
                 <option value="2" selected>2 guests</option>
                 <option value="3">3 guests</option>
                 <option value="4">4 guests</option>
@@ -391,10 +430,20 @@
                 <option value="6">6 guests</option>
             </select>
         </div>
+
+
+
+  <div class="room-info">
+    <label for="numberOfRoom">Number of Rooms</label>
+    <input type="number" id="numberOfRoom" class="rooms" name="numberOfRoom" min="1" max="5" value="1" required>
+    <div class="invalid-feedback">Please provide the number of rooms</div>
+</div>
+
+
         
         <div class="booking-summary">
             <div class="summary-row">
-                <span>₹<%= detail.price.toLocaleString("en-IN") %> x <span id="nights">1</span> nights</span>
+                <span>₹<%= detail.price.toLocaleString("en-IN") %> x <span id="nights">1</span> nights x <span id="numberOfRoomsDisplay"> 1</span> Rooms  </span>
                 <span id="basePrice">₹<%= detail.price.toLocaleString("en-IN") %></span>
             </div>
             <div class="summary-row">
@@ -548,7 +597,6 @@
 </script>
 <script src="https://www.paypal.com/sdk/js?client-id=AevjHRPaxM0OPf9Vc23QLP08I1uzMKiax5wGqdRmFM6P05gn6teHgRYIubuq9ofL5YMgYfpxPO4MeO9u&components=buttons"></script>
 
-
 <script>
 
 
@@ -598,6 +646,8 @@ function initMap() {
         const checkinInput = document.getElementById('checkin');
         const checkoutInput = document.getElementById('checkout');
         const guestsSelect = document.getElementById('guests');
+        const roomTypeSelect = document.getElementById('roomTypes');
+        const numberOfRoomsSelect = document.getElementById('numberOfRoom');
         const nightsSpan = document.getElementById('nights');
         const basePriceSpan = document.getElementById('basePrice');
         const totalPriceSpan = document.getElementById('totalPrice');
@@ -617,28 +667,49 @@ function initMap() {
         
         checkoutInput.addEventListener('change', calculateTotal);
         guestsSelect.addEventListener('change', calculateTotal);
+        numberOfRoomsSelect.addEventListener('change', calculateTotal);
+        roomTypeSelect.addEventListener('change', calculateTotal);
         
-        function calculateTotal() {
-            if (checkinInput.value && checkoutInput.value) {
-                const checkin = new Date(checkinInput.value);
-                const checkout = new Date(checkoutInput.value);
-                const nights = Math.ceil((checkout - checkin) / (1000 * 60 * 60 * 24));
-                
-                if (nights > 0) {
-                    nightsSpan.textContent = nights;
-                        const basePrice = parseFloat("<%= detail.price || 0 %>") * nights;
-            
-                    const total = basePrice + 800; // 800 is cleaning + service fee
-                    
-                    basePriceSpan.textContent = '₹' + basePrice.toLocaleString('en-IN');
-                    totalPriceSpan.textContent = '₹' + total.toLocaleString('en-IN');
-                    totalInput.value = total.toFixed(2);
-                  
-                  
+       function calculateTotal() {
+    if (checkinInput.value && checkoutInput.value) {
+        const checkin = new Date(checkinInput.value);
+        const checkout = new Date(checkoutInput.value);
+        const nights = Math.ceil((checkout - checkin) / (1000 * 60 * 60 * 24));
+        const numberOfRooms = parseInt(numberOfRoomsSelect.value, 10);
 
-                  }
-            }
+        if (nights > 0 && !isNaN(numberOfRooms) && numberOfRooms > 0) {
+            nightsSpan.textContent = nights;
+            document.getElementById('numberOfRoomsDisplay').textContent = numberOfRooms;
+
+            // Calculate the base price based on the number of rooms and nights
+            const basePrice = parseFloat("<%= detail.price || 0 %>") * nights * numberOfRooms;
+
+            // Add cleaning and service fees
+            const cleaningFee = 500;
+            const serviceFee = 300;
+            const total = basePrice + cleaningFee + serviceFee;
+
+            // Update the UI
+            basePriceSpan.textContent = '₹' + basePrice.toLocaleString('en-IN');
+            totalPriceSpan.textContent = '₹' + total.toLocaleString('en-IN');
+            totalInput.value = total.toFixed(2);
+        } else {
+            // Reset total if inputs are invalid
+            nightsSpan.textContent = 0;
+            document.getElementById('numberOfRoomsDisplay').textContent = 0;
+            basePriceSpan.textContent = '₹0';
+            totalPriceSpan.textContent = '₹0';
+            totalInput.value = '';
         }
+    } else {
+        // Reset total if inputs are missing
+        nightsSpan.textContent = 0;
+        document.getElementById('numberOfRoomsDisplay').textContent = 0;
+        basePriceSpan.textContent = '₹0';
+        totalPriceSpan.textContent = '₹0';
+        totalInput.value = '';
+    }
+}
 
 
 
@@ -674,43 +745,9 @@ function initMap() {
                 bookedDatesList.appendChild(listItem);
             });
         }
-
-
-
-        
-        // Handle form submission
-        // if (bookingForm) {
-        //     bookingForm.addEventListener('submit', function(e) {
-        //         e.preventDefault();
-                
-        //         // In a real app, you would send this data to your server
-        //         const bookingData = {
-        //               propertyId: '<%= detail._id %>',
-        //             checkin: checkinInput.value,
-        //             checkout: checkoutInput.value,
-        //             guests: guestsSelect.value,
-        //             total: totalPriceSpan.textContent.replace('₹', '').replace(/,/g, '')
-        //         };
-                
-        //         console.log('Booking data:', bookingData);
-                
-        //         // Show confirmation modal
-        //         bookingModal.style.display = 'flex';
-        //     });
-        // }
-        
-        // Close modal
-        // modalClose.addEventListener('click', function() {
-        //     bookingModal.style.display = 'none';
-        // });
-        
-        // // Close modal when clicking outside
-        // window.addEventListener('click', function(e) {
-        //     if (e.target === bookingModal) {
-        //         bookingModal.style.display = 'none';
-        //     }
-        // });
     });
+
+
 </script>
 </body>
 </html>

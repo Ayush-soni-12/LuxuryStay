@@ -1,0 +1,23 @@
+<%- include('partials/header') %>
+    <div class="properties-grid">
+        <% properties.forEach(function(property) { %>
+            <div class="property-card">
+                <div class="property-images-row">
+                    <% (Array.isArray(property.image) ? property.image : [property.image]).forEach(function(img) { %>
+                        <a href="/show/<%= property._id %>/view">
+                        <img src="<%= img.url ? img.url : img %>" alt="<%= property.title %>">
+                        </a>
+                    <% }); %>
+                </div>
+                <div class="property-info">
+                    <div class="property-type"><%= property.category %></div>
+                    <h3 class="property-title"><%= property.title %></h3>
+                    <div class="property-location"><%= property.location %></div>
+                    <div class="property-price">
+                        ₹<%= property.price %> <span class="price-per-night">per night</span>
+                    </div>
+                </div>
+            </div>
+        <% }); %>
+    </div>
+<%- include('partials/footer') %>

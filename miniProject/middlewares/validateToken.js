@@ -25,10 +25,7 @@ const validToken = asyncHandler(async (req, res, next) => {
         return res.status(403).send("Token has been revoked. Please log in again.");
     }
     
-//   if (!token) {
-//     res.locals.currentUser = null; // No user is logged in
-//     return next();
-//   }
+
     try {
         // Verify the token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);

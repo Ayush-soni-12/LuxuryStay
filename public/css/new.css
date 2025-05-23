@@ -42,40 +42,7 @@ body {
     font-size: 5px;
     top: 0px;
   }   
-  /* #full {
-    height: 100vh;
-    width: 400px;
-    background-color: rgba(255, 255, 255, 0.7);
-    position: fixed;
-    z-index: 50;
-    top: 0;
-    right: -400px;
-    backdrop-filter: blur(10px);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    box-shadow: -5px 0px 10px rgba(0, 0, 0, 0.1);
-  }
-  #full h4{
-    padding: 10px 20px;
-    font-size: 20px;
-    cursor: pointer;
-    transition: transform 0.3s ease, color 0.3s ease;
-    will-change: transform, color;
-  }
-  #full h4:hover {
-    color: #ff5a5f;
-    transform: scale(1.2) !important;
-  }
-  
-  #full a{
-    text-decoration: none;
-    text-decoration-line: none;
-    color: black;
-  
-  }  */
+
   .navbar i{
     cursor: pointer;
   }
@@ -217,6 +184,9 @@ textarea.input {
     color: #dc3545;
     font-size: 0.9rem;
     margin-top: 0.5rem;
+}
+.property-header{
+    margin-top:20px
 }
 
 /* Responsive Design */

@@ -8,23 +8,17 @@ cloudinary.config({
 
 })
 
-// const storage = new CloudinaryStorage({
-//     cloudinary: cloudinary,
-//     params: {
-//       folder: 'LuxuryStay',
-//       allowedformat: ["png","jpg","jpeg"] ,
-//     },
-//   });
 const storage = new CloudinaryStorage({
   cloudinary,
   params: async (req, file) => {
       return {
-          folder: "LuxuryStay", // Folder name in Cloudinary
+          folder: req.cloudinaryFolder || "LuxuryStay", // Folder name in Cloudinary
           allowed_formats: ["jpeg", "png", "jpg"], // Allowed file formats
           public_id: `${Date.now()}-${file.originalname}`, // Optional: Custom public ID
       };
   },
 });
+
 
   module.exports = {
     cloudinary,

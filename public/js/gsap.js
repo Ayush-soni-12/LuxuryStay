@@ -1,5 +1,5 @@
 
-// import { gsap } from "https://cdn.skypack.dev/gsap";
+// // import { gsap } from "https://cdn.skypack.dev/gsap";
 
 import { gsap } from "https://cdn.skypack.dev/gsap";
 import { ScrollTrigger } from "https://cdn.skypack.dev/gsap/ScrollTrigger";
@@ -94,3 +94,13 @@ gsap.from("h1 .b",{
     stagger:-0.15
     
 })
+
+
+
+
+
+
+
+
+
+

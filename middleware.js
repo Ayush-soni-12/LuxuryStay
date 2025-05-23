@@ -3,6 +3,7 @@ const Review = require("./Modals/review");
 const {listingSchema} = require("./schema");
 const {reviewSchema} = require("./schema");
 const ExpressError = require("./utils/ExpressError");
+const { cloudinary } = require("./CloudConfig");
 
 module.exports.isOwner = async (req, res, next) => {
     try {
@@ -55,3 +56,34 @@ module.exports.isreviewAuthor =async (req,res,next)=>{
     }
     next();
 }
+
+    module.exports.enforceFiveImages = async (req, res, next) => {
+    if (!req.files || req.files.length !== 5) {
+        // Delete any uploaded files from Cloudinary
+        if (req.files && req.files.length > 0) {
+            for (const file of req.files) {
+                if (file.filename) {
+                    await cloudinary.uploader.destroy(file.filename);
+                }
+            }
+        }
+        return res.redirect("/show/new?message=" + encodeURIComponent("Please upload exactly 5 images."));
+    }
+    next();
+};
+
+
+//     module.exports.updateFiveImage = async (req, res, next) => {
+//     if (!req.files || req.files.length !== 5) {
+//         // Delete any uploaded files from Cloudinary
+//         if (req.files && req.files.length > 0) {
+//             for (const file of req.files) {
+//                 if (file.filename) {
+//                     await cloudinary.uploader.destroy(file.filename);
+//                 }
+//             }
+//         }
+//         return res.redirect("/show/new?message=" + encodeURIComponent("Please update all images ."));
+//     }
+//     next();
+// };

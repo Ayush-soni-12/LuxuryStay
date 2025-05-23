@@ -103,4 +103,16 @@ const logger = winston.createLogger({
     ],
 });
 
-module.exports = logger;
+const logWithUser = (req, level, message) => {
+    try {
+        const email = req?.user?.email || 'Guest';
+        logger.log({
+            level,
+            message: `[User: ${email}] ${message}`,
+        });
+    } catch (e) {
+        logger.error(`Logger failed: ${e.message}`);
+    }
+};
+
+module.exports = {logger,logWithUser};

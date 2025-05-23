@@ -1,0 +1,37 @@
+       <%- include('partials/header') %>
+</head>
+<body>
+    <div class="container">
+        <h2>Edit Profile</h2>
+        <% if (message) { %>
+            <div class="alert"><%= message %></div>
+        <% } %>
+        <form action="/api/updateProfile" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" value="<%= userData.name %>" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone_No">Phone Number</label>
+                <input type="text" id="phone_No" name="phone_No" value="<%= userData.Phone_No %>" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Current Image</label>
+                <div class="image-preview">
+                    <img src="<%= userData.image %>" alt="Profile Image" width="120" height="120">
+                </div>
+            </div>
+            
+         
+                <div class="form-group">
+                      <label>Change Image:</label>
+                    <input type="file" name="image" accept="image/*"><br><br>
+                </div>
+            
+            <button type="submit">Update Profile</button>
+        </form>
+        <a href="/show" class="back-link">Back to Profile</a>
+    </div>
+<%- include('partials/footer') %>
