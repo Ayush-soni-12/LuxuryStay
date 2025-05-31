@@ -6,13 +6,13 @@ const axios = require("axios");
 const nodemailer = require("nodemailer");
 const Transport = require("winston-transport");
 
-// === 📁 Step 1: Define & Create Log Directory ===
+
 const logDir = path.join(__dirname, "../logs");
 if (!fs.existsSync(logDir)) {
     fs.mkdirSync(logDir, { recursive: true });
 }
 
-// === 🤖 Telegram Alert Formatter ===
+
 const telegramFormatter = winston.format((info) => {
     if (info.level === "error") {
         const message = `🚨 *ERROR LOG*\n*${info.message}*\n🕒 ${new Date().toISOString()}`;
@@ -27,14 +27,14 @@ const telegramFormatter = winston.format((info) => {
     return info;
 });
 
-// === 📬 Email Transport for Error Alerts ===
+
 class EmailTransport extends Transport {
     constructor(opts) {
         super(opts);
         this.mailer = nodemailer.createTransport({
             host: process.env.SMTP_HOST,
-            port: parseInt(process.env.SMTP_PORT, 10), // Convert port to a number
-            secure: false, // Use true for port 465, false for other ports
+            port: parseInt(process.env.SMTP_PORT, 10),
+            secure: false, // 
             requireTLS: true,
             auth: {
                 user:process.env.SMTP_MAIL ,
@@ -66,7 +66,7 @@ class EmailTransport extends Transport {
     }
 }
 
-// === 🧱 Step 2: Create rotating file transports ===
+
 const createTransport = (level) => {
     return new winston.transports.DailyRotateFile({
         filename: `${level}-%DATE%.log`,
@@ -79,7 +79,7 @@ const createTransport = (level) => {
     });
 };
 
-// === 🧠 Step 3: Create the logger instance ===
+
 const logger = winston.createLogger({
     level: "info",
     format: winston.format.combine(

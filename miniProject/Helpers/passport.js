@@ -4,10 +4,10 @@ const User = require("../../Modals/user.js");
 passport.use(new GoogleStrategy({
   clientID: process.env.client_ID,
   clientSecret: process.env.client_Secret,
-  callbackURL: 'http://localhost:8080/auth/google/callback',
+callbackURL: 'https://luxurystays.site/auth/google/callback',
 }, async (accessToken, refreshToken, profile, done) => {
   console.log("🔐 GoogleStrategy triggered!");
-  // console.log("👤 Google Profile:", profile);
+
 
   try {
     let user = await User.findOne({ googleId: profile.id });

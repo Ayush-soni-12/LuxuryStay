@@ -1,22 +1,4 @@
 
-
-
-
-// Initialize Flatpickr first (doesn't depend on Google Maps)
-const datePicker = flatpickr("#checkin, #checkout", {
-    mode: "range",
-    minDate: "today",
-    dateFormat: "M j, Y",
-    defaultDate: ["today", new Date().fp_incr(7)],
-    onClose: function(selectedDates) {
-      if (selectedDates.length === 2) {
-        document.getElementById('checkin').value = flatpickr.formatDate(selectedDates[0], "M j, Y");
-        document.getElementById('checkout').value = flatpickr.formatDate(selectedDates[1], "M j, Y");
-      }
-    }
-  });
-  
-  // Initialize Google Maps when API loads
   window.initMap = function () {
     try{
     const locationInput = document.getElementById('location');
@@ -49,65 +31,7 @@ catch(err){
   
   // Load everything when DOM is ready
   document.addEventListener('DOMContentLoaded', function() {
-    // Initialize guest picker functionality
-    const guestsModal = document.querySelector('.guests-picker-modal');
-    const guestsInput = document.getElementById('guests');
     
-    let adults = 1, children = 0, infants = 0;
-  
-    function updateGuestDisplay() {
-      const total = adults + children;
-      let text = '';
-      
-      if (adults > 0) text += `${adults} adult${adults !== 1 ? 's' : ''}`;
-      if (children > 0) text += `${text ? ', ' : ''}${children} child${children !== 1 ? 'ren' : ''}`;
-      if (infants > 0) text += `${text ? ', ' : ''}${infants} infant${infants !== 1 ? 's' : ''}`;
-      
-      guestsInput.value = text || 'Add guests';
-      guestsInput.dataset.total = total;
-    }
-  
-    // Guest picker event handlers
-    document.querySelector('.guests-field').addEventListener('click', function(e) {
-      if (!e.target.classList.contains('airbnb-search-button')) {
-        guestsModal.style.display = 'block';
-      }
-    });
-  
-    document.querySelector('.apply-guests').addEventListener('click', function() {
-      guestsModal.style.display = 'none';
-    });
-  
-    document.querySelectorAll('.increment').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const type = this.parentElement.querySelector('h4').textContent.toLowerCase();
-        if (type === 'adults') adults++;
-        if (type === 'children') children++;
-        if (type === 'infants') infants++;
-        updateCounts();
-      });
-    });
-  
-    document.querySelectorAll('.decrement').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const type = this.parentElement.querySelector('h4').textContent.toLowerCase();
-        if (type === 'adults' && adults > 1) adults--;
-        if (type === 'children' && children > 0) children--;
-        if (type === 'infants' && infants > 0) infants--;
-        updateCounts();
-      });
-    });
-  
-    function updateCounts() {
-      document.querySelectorAll('.count').forEach(el => {
-        const type = el.closest('.guest-option').querySelector('h4').textContent.toLowerCase();
-        if (type === 'adults') el.textContent = adults;
-        if (type === 'children') el.textContent = children;
-        if (type === 'infants') el.textContent = infants;
-      });
-      updateGuestDisplay();
-    }
-  
     // Load Google Maps after everything else is ready
     loadGoogleMaps();
   });

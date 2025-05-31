@@ -72,18 +72,3 @@ module.exports.isreviewAuthor =async (req,res,next)=>{
     next();
 };
 
-
-//     module.exports.updateFiveImage = async (req, res, next) => {
-//     if (!req.files || req.files.length !== 5) {
-//         // Delete any uploaded files from Cloudinary
-//         if (req.files && req.files.length > 0) {
-//             for (const file of req.files) {
-//                 if (file.filename) {
-//                     await cloudinary.uploader.destroy(file.filename);
-//                 }
-//             }
-//         }
-//         return res.redirect("/show/new?message=" + encodeURIComponent("Please update all images ."));
-//     }
-//     next();
-// };

@@ -5,7 +5,7 @@ const User = require("../../Modals/user.js");
 router.use(express.json());
 const path = require("path");
 const multer =  require("multer");
-const {userSignup,userRegister,sendMailAgain,forgotpassword,passwordReset,loginPage,userLogin ,userLogout,userProfile,editProfile,updateProfile,verifyOtp, resendOtp,Booking,ShowBooking,CancelBooking,BookingCancelConfirm,becomeHost,getHostStatus,getHostApplications,verifyHost,rejectHost} = require("../controllers/userControllers")
+const {userSignup,userRegister,sendMailAgain,forgotpassword,passwordReset,loginPage,userLogin ,userLogout,userProfile,editProfile,updateProfile,verifyOtp, resendOtp,Booking,ShowBooking,CancelBooking,BookingCancelConfirm,becomeHost,getHostStatus,getHostApplications,verifyHost,rejectHost,Profile} = require("../controllers/userControllers")
 const {registerValidator,sendMailVerificationValidator,passwordResetValidator,userLoginValidator,updateProfileValidator} = require("../Helpers/validate.js")
 const { validationResult } = require("express-validator");
 const validToken= require("../middlewares/validateToken.js");
@@ -139,6 +139,7 @@ router.get("/admin/dashboard", validToken, isAdmin, async (req, res, next) => {
 router.get("/admin/host-applications", validToken, isAdmin, getHostApplications);
 router.post("/admin/verify-host/:userId", validToken, isAdmin, verifyHost);
 router.post("/admin/reject-host/:userId", validToken, isAdmin, rejectHost);
+router.get("/user/profile/:userId",validToken,Profile)
 
 
 

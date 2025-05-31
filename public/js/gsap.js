@@ -34,29 +34,88 @@ gsap.from(".navbar h4", {
     
  let navbar = document.querySelector(".navbar .nav");
  let body = document.querySelector("body");
+ const closeBtn = document.querySelector('.close-btn');
 
 let tl = gsap.timeline();
 
-tl.to("#full",{
-    x:-400,
-    duration:0.5,
+// tl.to("#full",{
+//     x:-400,
+//     duration:0.5,
     
+// })
+// tl.from("#full h4",{
+//     x:-30,
+//     opacity:0,
+//     duration:0.5,
+//     stagger:0.3,
+// });
+// tl.pause();
+// navbar.addEventListener("click",()=>{
+//     console.log("hello");
+//     tl.play();
+// });
+// closeBtn.addEventListener("click", () => {
+//     tl.reverse();
+// });
+// document.addEventListener("dblclick",()=>{
+//     console.log("bye");
+//     tl.reverse();
+// });
+
+
+
+
+
+tl.to("#full", {
+    x: -400,
+    duration: 0.1,
 })
-tl.from("#full h4",{
-    x:-30,
-    opacity:0,
-    duration:0.5,
-    stagger:0.3,
+.from("#full h4", {
+    x: -30,
+    opacity: 0,
+    duration: 0.4,
+    stagger: 0.3,
 });
+
+// Pause the timeline initially
 tl.pause();
-navbar.addEventListener("click",()=>{
-    console.log("hello");
-    tl.play();
+
+// Open dashboard on navbar click
+navbar.addEventListener("click", () => {
+    tl.reversed() ? tl.play() : tl.reverse();
 });
-document.addEventListener("dblclick",()=>{
-    console.log("bye");
+
+// Close dashboard on close button click
+closeBtn.addEventListener("click", () => {
     tl.reverse();
 });
+
+// Add hover animation for close button
+gsap.to('.close-btn', {
+    rotation: 0,
+    duration: 0.3
+});
+
+closeBtn.addEventListener("mouseenter", () => {
+    gsap.to('.close-btn', {
+        rotation: 90,
+        duration: 0.3,
+        ease: "power2.out"
+    });
+});
+
+closeBtn.addEventListener("mouseleave", () => {
+    gsap.to('.close-btn', {
+        rotation: 0,
+        duration: 0.3,
+        ease: "power2.out"
+    });
+});
+
+
+
+
+
 
 let h1 = document.querySelector("h1");
 let h1Text = h1.textContent;

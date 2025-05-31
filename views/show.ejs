@@ -1,0 +1,164 @@
+
+<%- include('partials/searchBar') %>
+<style>
+
+/* Replace existing pagination styles with these */
+.pagination-wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 2rem 0;
+}
+
+.pagination {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.page-link {
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    color: #333;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.page-link:hover {
+    background-color: #f5f5f5;
+}
+
+.page-link.active {
+    background-color: #ff385c;
+    color: white;
+    border-color: #ff385c;
+}
+
+@media (max-width: 768px) {
+    .pagination {
+        gap: 4px;
+    }
+    
+    .page-link {
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+}
+</style>
+
+
+
+<!-- Main Content -->
+<div class="listing-container">
+  
+    <br><br><br><br><br>
+
+    
+    <% if (message) { %>
+    <div id="review-message" class="alert alert-success">
+        <p id="review-message" style="color:green"><%= message %></p>
+    </div>
+    <% } %>
+
+
+    <br><br>
+
+    <h1 class="listing-header">Premium Listings</h1>
+    <div id="filters">
+        <div class="filter">
+            <a href="/show/filters/trending">
+                <i class="fa-solid fa-fire"></i>
+                <p>Trending</p>
+            </a>
+        </div>
+        <div class="filter">
+            <a href="/show/filters/room">
+                <i class="fa-solid fa-bed"></i>
+                <p>Room</p>
+            </a>
+        </div>
+        <div class="filter">
+            <a href="/show/filters/mountain">
+                <i class="fa-solid fa-mountain-sun"></i>
+                <p>Mountain</p>
+            </a>
+        </div>
+        <div class="filter">
+            <a href="/show/filters/cities">
+                <i class="fa-solid fa-city"></i>
+                <p>Iconic Cities</p>
+            </a>
+        </div>
+        <div class="filter">
+            <a href="/show/filters/castles">
+                <i class="fa-brands fa-fort-awesome"></i>
+                <p>Castles</p>
+            </a>
+        </div>
+        <div class="filter">
+            <a href="/show/filters/pool">
+                <i class="fa-solid fa-person-swimming"></i>
+                <p>Amazing Pool</p>
+            </a>
+        </div>
+        <div class="filter">
+            <a href="/show/filters/snow">
+                <i class="fa-solid fa-snowflake"></i>
+                <p>Arctic</p>
+            </a>
+        </div>
+        <div class="filter">
+            <a href="/show/filters/camping">
+                <i class="fa-solid fa-campground"></i>
+                <p>Camping</p>
+            </a>
+        </div>
+    </div>
+
+    <!-- Properties Grid -->
+    <div class="properties-grid">
+        <% datas.forEach(data => { %>
+        <div class="property-card">
+            <a href="/show/<%= data._id %>/view">
+                <img src="<%= data.image[0].url%>" alt="<%= data.title %>" class="property-image">
+            </a>
+            <div class="property-info">
+                <h3><%= data.title %></h3>
+                <div class="price-tag">₹<%= data.price %>/night</div>
+                <div class="location">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <%= data.location %>, <%= data.country %>
+                </div>
+            </div>
+        </div>
+        <% }); %>
+    </div>
+</div>
+
+
+<!-- Add this after your properties-grid div -->
+<div class="pagination-wrapper">
+    <% if (totalPages > 1) { %>
+        <div class="pagination">
+            <% if (currentPage > 1) { %>
+                <a href="/show?page=<%= currentPage - 1 %>" class="page-link">Previous</a>
+            <% } %>
+
+            <% for(let i = 1; i <= totalPages; i++) { %>
+                <a href="/show?page=<%= i %>" 
+                   class="page-link <%= i === currentPage ? 'active' : '' %>">
+                   <%= i %>
+                </a>
+            <% } %>
+
+            <% if (currentPage < totalPages) { %>
+                <a href="/show?page=<%= currentPage + 1 %>" class="page-link">Next</a>
+            <% } %>
+        </div>
+    <% } %>
+</div>
+
+
+
+
+<%- include('partials/searchfooter') %>

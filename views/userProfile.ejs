@@ -1,0 +1,29 @@
+<%- include('partials/header') %>
+<div class="container mt-5">
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <% if (userData.image) { %>
+                    <img src="<%= userData.image %>" alt="" class="rounded-circle">
+                <% } else { %>
+                    <img src="/images/default-avatar.png" alt="Default profile" class="rounded-circle">
+                <% } %>
+            </div>
+            <h2 class="profile-name"><%= userData.name %></h2>
+        </div>
+
+        <div class="profile-info">
+            <div class="info-item">
+                <i class="fas fa-envelope"></i>
+                <span class="info-label">Email:</span>
+                <span class="info-value"><%= userData.email %></span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-phone"></i>
+                <span class="info-label">Contact:</span>
+                <span class="info-value"><%= userData.Phone_No || 'Not provided' %></span>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include("partials/footer") %>

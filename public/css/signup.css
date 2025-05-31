@@ -129,16 +129,7 @@ label {
     box-shadow: 0 5px 15px rgba(255, 56, 92, 0.3);
 }
 
-/* Social Links */
-.social-links {
-    position: fixed;
-    bottom: 2rem;
-    left: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    z-index: 1000;
-}
+
 
 .social-wrapper {
     position: fixed;
@@ -147,24 +138,7 @@ label {
     z-index: 1000;
   }
   
-  .social-icon {
-    width: 40px;
-    height: 40px;
-    background: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0.5rem 0;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    transition: var(--transition);
-  }
-  
-  .social-icon:hover {
-    transform: translateY(-3px);
-    background: var(--primary);
-    color: white;
-  }
+
 
 /* Validation Styles */
 .valid-feedback {

@@ -1,9 +1,33 @@
+# Development
 node_modules/
+npm-debug.log
 .env
-*.log
-miniProject/logs/
+.env.*
+.git
+.gitignore
+*.md
+docker-compose*
+Dockerfile*
+
+# Logs
+miniProject/logs/*
+
+# Certificates (mount at runtime)
+certs/*
+
+# Google Cloud credentials (mount at runtime)
 airnb-jgvt-0d320e410185.json
-docker-compose.yml
-dockerfile
-certs/
-mongo-data/
+
+# Build files
+dist
+build
+.cache
+
+# Test files
+__tests__
+*.test.js
+*.spec.js
+
+# Development configs
+.vscode
+.idea

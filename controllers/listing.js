@@ -4,17 +4,40 @@ const { logWithUser } = require("../miniProject/utils/logger");
 const { cloudinary } = require("../CloudConfig");
 
 module.exports.index = async (req, res) => {
-  logWithUser(req, 'info', 'Accessed listing index page');
-  let datas = await Listing.find();
-  if(!datas||datas.length ===0){
-    return res.redirect("/show?message=" + encodeURIComponent("No Listings found"));
-  }
-  res.render("index.ejs", {
-    cssFile: 'index.css',
-    datas,
-    message: req.query.message || null
-  });
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 8; 
+        const skip = (page - 1) * limit;
+
+ 
+        const totalListings = await Listing.countDocuments();
+        const totalPages = Math.ceil(totalListings / limit);
+
+        // Get paginated listings
+        const datas = await Listing.find({})
+            .skip(skip)
+            .limit(limit)
+            .sort({ createdAt: -1 });
+
+        res.render("show.ejs", {
+            datas,
+            currentPage: page,
+            totalPages,
+            message: req.query.message || null
+        });
+    } catch (error) {
+        console.error(error);
+        res.redirect("/?message=" + encodeURIComponent("Error loading listings"));
+    }
 };
+
+
+
+
+
+
+
+
 
 module.exports.new = (req, res) => {
   logWithUser(req, 'info', 'Accessed new listing form');
@@ -26,7 +49,7 @@ module.exports.newListing = async (req, res, next) => {
 
   if (!req.files || req.files.length < 5) {
     logWithUser(req, 'warn', 'Tried to create listing with less than 5 images');
-    // return res.status(400).send("Please upload at least 5 images.");
+
     return res.redirect("/show/new?message=" + encodeURIComponent("Please upload at least 5 images."));
   }
 
@@ -92,7 +115,7 @@ module.exports.edit = async (req, res) => {
     logWithUser(req, 'warn', `Edit attempted on non-existent listing: ${id}`);
     return res.redirect("/show");
   }
-  // let originalImageUrl = data.image.url.replace("/upload", "/upload/w_200,e_blur:100");
+
 
   logWithUser(req, 'info', `Accessed edit form for listing: ${id}`);
   res.render("edit.ejs", { cssFile: 'edit.css', data ,message: req.query.message || null});
@@ -101,13 +124,6 @@ module.exports.edit = async (req, res) => {
 module.exports.updateListing = async (req, res) => {
   let { id } = req.params;
   let { title, description, totalRooms,category, price, country, location } = req.body;
-
-
-  //   if (!req.files || req.files.length < 5) {
-  //   logWithUser(req, 'warn', 'Tried to create listing with less than 5 images');
-  //   // return res.status(400).send("Please upload at least 5 images.");
-  //   return res.redirect(`/show/${id}/edit?message=`+ encodeURIComponent("Please update all images ."));
-  // }
           if (!req.files || req.files.length !== 5) {
        if (req.files && req.files.length > 0) {
             for (const file of req.files) {
@@ -174,31 +190,54 @@ module.exports.delete = async (req, res) => {
   return res.redirect("/show?message=" + encodeURIComponent("listing deleted"));
 };
 
+
+
+
+
+
 module.exports.filters = async (req, res) => {
   try {
     const { category } = req.params;
-    const datas = await Listing.find({ category });
+    
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = 8;
+    const skip = (page - 1) * limit;
+
+
+    const totalListings = await Listing.countDocuments({ category });
+    const totalPages = Math.ceil(totalListings / limit);
+
+    const datas = await Listing.find({ category })
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
 
     if (datas.length === 0) {
       logWithUser(req, 'info', `No listings found for category: ${category}`);
-      return res.render('index.ejs', {
-        cssFile: 'index.css',
+      return res.render('show.ejs', {
         datas: [],
-        message: `No listings found for "${category} category".`,
+        currentPage: 1,
+        totalPages: 0,
+        totalListings: 0,
+        message: `No listings found for "${category} category".`
       });
     }
 
     logWithUser(req, 'info', `Filtered listings by category: ${category}`);
-    res.render('index.ejs', {
-      cssFile: 'index.css',
+    res.render('show.ejs', {
       datas,
-      message: `Showing results for "${category} category".`,
+      currentPage: page,
+      totalPages,
+      totalListings,
+      message: `Showing results for "${category} category".`
     });
   } catch (err) {
     logWithUser(req, 'error', `Error in filter: ${err.message}`);
-    res.status(500).send('Server Error');
+    res.redirect("/show?message=" + encodeURIComponent("Error applying filters"));
   }
 };
+
 
 module.exports.search = async (req, res) => {
   let { location } = req.query;
@@ -207,51 +246,99 @@ module.exports.search = async (req, res) => {
     return res.redirect("/show");
   }
 
-  location = String(location || '').trim();
-  const cacheKey = `search:listings:${location.toLowerCase()}`;
-
   try {
+    // Add pagination parameters
+    const page = parseInt(req.query.page) || 1;
+    const limit = 8; // listings per page
+    const skip = (page - 1) * limit;
+
+    location = String(location || '').trim();
+    const cacheKey = `search:listings:${location.toLowerCase()}`;
+
+    let datas;
     const cachedData = await redis.get(cacheKey);
+    
     if (cachedData) {
       logWithUser(req, 'info', `Cache HIT for location: ${location}`);
-      const datas = JSON.parse(cachedData);
-      return res.render('index.ejs', {
-        cssFile: 'index.css',
+      const allData = JSON.parse(cachedData);
+      
+
+      const totalListings = allData.length;
+      const totalPages = Math.ceil(totalListings / limit);
+      
+      
+      datas = allData.slice(skip, skip + limit);
+
+      return res.render('show.ejs', {
         datas,
-        message: `Showing cached results for "${location}".`,
+        currentPage: page,
+        totalPages,
+        totalListings,
+        message: `Showing cached results for "${location}".`
       });
     }
 
-    const datas = await Listing.find({
+
+    const totalListings = await Listing.countDocuments({
       location: { $regex: location, $options: 'i' }
     });
+    const totalPages = Math.ceil(totalListings / limit);
+
+    datas = await Listing.find({
+      location: { $regex: location, $options: 'i' }
+    })
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
 
     if (datas.length === 0) {
       logWithUser(req, 'info', `No listings found for location: ${location}`);
-      return res.render('index.ejs', {
-        cssFile: 'index.css',
+      return res.render('show.ejs', {
         datas: [],
-        message: `No listings found for "${location}".`,
+        currentPage: 1,
+        totalPages: 0,
+        totalListings: 0,
+        message: `No listings found for "${location}".`
       });
     }
 
-    await redis.set(cacheKey, JSON.stringify(datas), 'EX', 3600);
+  
+    const allResults = await Listing.find({
+      location: { $regex: location, $options: 'i' }
+    });
+    await redis.set(cacheKey, JSON.stringify(allResults), 'EX', 3600);
+
     logWithUser(req, 'info', `Cache MISS — MongoDB queried for ${location}`);
-    res.render('index.ejs', {
-      cssFile: 'index.css',
+    res.render('show.ejs', {
       datas,
-      message: `Showing results for "${location}".`,
+      currentPage: page,
+      totalPages,
+      totalListings,
+      message: `Showing results for "${location}".`
     });
 
   } catch (err) {
     logWithUser(req, 'error', `Error during search: ${err.message}`);
-    res.status(500).send('Internal Server Error');
+    res.redirect("/show?message=" + encodeURIComponent("Error performing search"));
   }
 };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 module.exports.contact = async (req, res) => {
   logWithUser(req, 'info', 'Accessed contact page');
-  return res.render("contact.ejs");
+  return res.render("contact.ejs",{message: req.query.message || null,});
 };
 
 module.exports.showProperty = async (req, res) => {

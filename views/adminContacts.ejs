@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<style>
+    .contact-list {
+        margin: 20px 0;
+    }
+    .contact-item {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+        padding: 20px;
+    }
+    .contact-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    .contact-status {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.875rem;
+    }
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+    .status-responded {
+        background: #d4edda;
+        color: #155724;
+    }
+    .contact-message {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 4px;
+        margin: 10px 0;
+    }
+    .response-form {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #dee2e6;
+    }
+    .contact-meta {
+        color: #6c757d;
+        font-size: 0.875rem;
+        margin-bottom: 10px;
+    }
+</style>
+
+<body>
+    <div class="container mt-5">
+        <h2>Contact Messages</h2>
+        
+        <% if (typeof message !== 'undefined' && message) { %>
+            <div class="alert alert-success">
+                <%= message %>
+            </div>
+        <% } %>
+
+        <div class="contact-list">
+            <% contacts.forEach(contact => { %>
+                <div class="contact-item">
+                    <div class="contact-header">
+                        <h4><%= contact.subject %></h4>
+                        <span class="contact-status <%= contact.status === 'pending' ? 'status-pending' : 'status-responded' %>">
+                            <%= contact.status.charAt(0).toUpperCase() + contact.status.slice(1) %>
+                        </span>
+                    </div>
+                    <div class="contact-meta">
+                        From: <%= contact.name %> (<%= contact.email %>)<br>
+                        Received: <%= new Date(contact.createdAt).toLocaleString() %>
+                    </div>
+                    <div class="contact-message">
+                        <%= contact.message %>
+                    </div>
+                    
+                    <% if (contact.status === 'responded') { %>
+                        <div class="mt-3">
+                            <strong>Your Response:</strong>
+                            <div class="contact-message">
+                                <%= contact.response %>
+                            </div>
+                            <small class="text-muted">
+                                Responded on: <%= new Date(contact.responseDate).toLocaleString() %>
+                            </small>
+                        </div>
+                    <% } else { %>
+                        <div class="response-form">
+                            <form action="/api/admin/contacts/<%= contact._id %>/respond" method="POST">
+                                <div class="form-group">
+                                    <label for="response-<%= contact._id %>">Your Response:</label>
+                                    <textarea 
+                                        class="form-control" 
+                                        id="response-<%= contact._id %>" 
+                                        name="response" 
+                                        rows="4" 
+                                        required
+                                    ></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary mt-2">Send Response</button>
+                            </form>
+                        </div>
+                    <% } %>
+                </div>
+            <% }) %>
+            
+            <% if (contacts.length === 0) { %>
+                <div class="alert alert-info">
+                    No contact messages found.
+                </div>
+            <% } %>
+        </div>
+    </div>
+</body>
+</html>

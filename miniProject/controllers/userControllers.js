@@ -48,7 +48,8 @@ module.exports.userRegister = asyncHandler(async (req, res) => {
     });
 
     const userdata = await newUser.save();
-    const msg = `<p>Hi ${name}, Please <a href="http://localhost:8080/mailVerification?id=${userdata._id}">verify</a> your mail.</p>`;
+    const msg = `<p>Hi ${name}, Please <a href="https://luxurystays.site/mailVerification?id=${userdata._id}">verify</a> your mail.</p>`;
+ 
     await sendMail(email, "Mail verification", msg);
 
     logger.info(`User registered successfully: ${email}`);
@@ -101,7 +102,7 @@ module.exports.sendMailAgain = asyncHandler(async (req, res) => {
         throw new ExpressError("Your email is already verified", 400);
     }
 
-    const msg = `<p>Hi ${userData.name}, Please <a href="http://localhost:8080/mailVerification?id=${userData._id}">verify</a> your mail.</p>`;
+     const msg = `<p>Hi ${userData.name}, Please <a href="https://luxurystays.site/mailVerification?id=${userData._id}">verify</a> your mail.</p>`;
     await sendMail(userData.email, "Mail verification", msg);
 
     logger.info(`Verification email re-sent to ${email}`);
@@ -124,7 +125,7 @@ module.exports.passwordReset = asyncHandler(async (req, res) => {
     }
 
     const randomToken = randomString.generate();
-    const msg = `<p>Hi ${userData.name}, Please <a href="http://localhost:8080/ResetPassword?token=${randomToken}">reset</a> your password.</p>`;
+    const msg = `<p>Hi ${userData.name}, Please <a href="https://luxurystays.site/ResetPassword?token=${randomToken}">reset</a> your password.</p>`;
 
     await PasswordReset.deleteMany({ user_id: userData._id });
 
@@ -308,7 +309,7 @@ module.exports.updateProfile = asyncHandler(async (req, res) => {
     const oldUser = await User.findById(user_id);
 
     if (req.file) {
-        // Delete old image from Cloudinary if not default
+      
         if (oldUser && oldUser.image_id) {
             await cloudinary.uploader.destroy(oldUser.image_id);
         }
@@ -349,7 +350,7 @@ module.exports.userLogout = asyncHandler(async (req, res) => {
 
     res.clearCookie("jwt", {
         httpOnly: true,
-        secure: process.env.NODE_ENV !== "development",
+        secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
     });
 
@@ -372,7 +373,7 @@ module.exports.googleOauth = (req, res, next) => {
         }
 
         // Generate a token for the authenticated user
-        const accessToken = generateToken(res,user._id); // Ensure `generateToken` is implemented correctly
+        const accessToken = generateToken(res,user._id);
         console.log('Google OAuth successful for user:', user.email);
         return res.redirect('/show');
     })(req, res, next);
@@ -381,7 +382,7 @@ module.exports.googleOauth = (req, res, next) => {
 
 
 module.exports.Booking = asyncHandler(async (req, res) => {
-  // Helper function to iterate over dates between startDate (inclusive) and endDate (exclusive)
+  
   function iterateDates(startDate, endDate, callback) {
     const date = new Date(startDate);
     while (date < endDate) {
@@ -425,7 +426,7 @@ return res.redirect(`/show/${listingId}/view?message=` + encodeURIComponent("Lis
 return res.redirect(`/show/${listingId}/view?message=` + encodeURIComponent(`Not enough rooms available on ${unavailableDate}`));
   }
 
-  // Reserve rooms by updating bookingCalendar
+ 
   iterateDates(start, end, (dateStr) => {
     const prevRemaining = listing.bookingCalendar.get(dateStr) ?? listing.totalRooms;
     listing.bookingCalendar.set(dateStr, prevRemaining - numberOfRoom);
@@ -448,7 +449,7 @@ return res.redirect(`/show/${listingId}/view?message=` + encodeURIComponent(`Not
         <li><strong>Total Amount:</strong> ₹${total}</li>
         <li><strong>Your Booking Number is ${bookingNumber}</strong></li>
     </ul>
-    <p>If you have any questions or need further assistance, feel free to contact us. <a href="http://localhost:8080/show/contact">Contact us</a></p>
+    <p>If you have any questions or need further assistance, feel free to contact us. <a href="https://luxurystays.site/show/contact">Contact us</a></p>
     <p>We look forward to hosting you!</p>
     <p>Best regards,</p>
     <p><strong>LuxuryStay</strong></p>
@@ -477,27 +478,7 @@ return res.redirect(`/show/${listingId}/view?message=` + encodeURIComponent(`Not
 });
 
 
-// module.exports.ShowBooking = asyncHandler(async(req,res)=>{
 
-//     try {
-//         const { id } = req.params;
-
-//         // Fetch all bookings for the listing
-//         const bookings = await Booking.find({ listing: id }, "checkin checkout");
-
-//         // Format the booked dates
-//         const bookedDates = bookings.map((booking) => ({
-//             checkin: booking.checkin,
-//             checkout: booking.checkout,
-//         }));
-
-//         res.json({ success: true, bookedDates });
-//     } catch (err) {
-//         console.error(err);
-//         res.status(500).json({ success: false, message: "Failed to fetch booked dates." });
-//     }
-
-// })
 module.exports.CancelBooking = asyncHandler(async (req, res) => {
     const userId = req.user._id; // Assuming the user is authenticated
 
@@ -521,7 +502,7 @@ module.exports.CancelBooking = asyncHandler(async (req, res) => {
         return acc;
     }, {});
 
-    // Render the cancel booking page with grouped bookings
+  
     return res.render("cancelBooking.ejs", { groupedBookings, cssFile:"booking.css" });
 });
 
@@ -607,7 +588,7 @@ module.exports.becomeHost = asyncHandler(async (req, res) => {
         );
 
         // Send notification to admin (you can replace this with your admin email)
-        await sendMail(process.env.ADMIN_EMAIL || "admin@luxurystays.com", "New Host Application", msg);
+        await sendMail(process.env.SMTP_MAIL || "admin@luxurystays.com", "New Host Application", msg);
 
         logger.info(`Host application submitted for user: ${updatedUser.email}`);
         return res.redirect("/api/profile?message=" + encodeURIComponent("Your host application has been submitted successfully!"));
@@ -705,4 +686,15 @@ module.exports.rejectHost = asyncHandler(async (req, res) => {
     logger.info(`Host application rejected: ${user.email}`);
 
     return res.redirect("/api/admin/host-applications?message=" + encodeURIComponent("Host application rejected"));
+});
+
+
+module.exports.Profile = asyncHandler(async (req, res) => {
+const UserData = await User.findById(req.params.userId).select("-password -__v");
+if (!UserData) {
+    logger.error(`User profile not found for ID: ${req.params.userId}`, { userEmail: req.user.email });
+   return res.redirect("/show?message=" + encodeURIComponent("User not found"));
+}
+res.render("userProfile.ejs", { userData: UserData, cssFile: "userProfile.css", message: req.query.message || null });
+
 });

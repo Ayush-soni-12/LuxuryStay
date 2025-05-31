@@ -529,6 +529,87 @@ input[type="file"] {
   visibility: visible;
   opacity: 1;
 }
+
+
+/* ... existing code ... */
+
+/* Responsive Profile Header */
+@media (max-width: 768px) {
+  .profile-header {
+    padding: 2rem 1.5rem;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .profile-avatar {
+    margin-right: 0;
+    margin-bottom: 1.5rem;
+  }
+
+  .profile-info h1 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-header {
+    padding: 1.5rem 1rem;
+  }
+
+  .profile-avatar img {
+    width: 120px;
+    height: 120px;
+  }
+
+  .profile-info h1 {
+    font-size: 1.8rem;
+  }
+
+  .verification-badge {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .profile-header {
+    padding: 1rem;
+  }
+
+  .profile-avatar img {
+    width: 100px;
+    height: 100px;
+  }
+
+  .profile-info h1 {
+    font-size: 1.5rem;
+    word-wrap: break-word;
+    max-width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .member-since {
+    font-size: 0.85rem;
+  }
+
+  .verification-badge {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+  }
+
+  .edit-avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+  }
+}
+
+
+
+
+
+
+
+
 </style>
 
 
@@ -537,7 +618,7 @@ input[type="file"] {
     <div class="container">
       <div class="profile-header">
         <div class="profile-avatar">
-          <img src="<%=userData.image %>" alt="Profile picture of <%= userData.name %>">
+          <img src="<%=userData.image %>" alt="">
           <form action="/api/updateProfile" >
             <button type="submit
             " class="edit-avatar" title="Change profile photo">
@@ -588,10 +669,6 @@ input[type="file"] {
               <div class="contact-item">
                 <span class="contact-label">Phone:</span>
                 <span class="contact-value"><%=userData.Phone_No %></span>
-              </div>
-              <div class="contact-item">
-                <span class="contact-label">Address:</span>
-                <span class="contact-value">123 Main St, San Francisco, CA</span>
               </div>
             </div>
           </div>

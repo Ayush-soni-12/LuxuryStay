@@ -1,6 +1,104 @@
 
 
         <%- include('partials/header') %>
+        <style>
+     .edit-images-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+    width: 100%;
+}
+
+.edit-image-item {
+    position: relative;
+    aspect-ratio: 16/9;
+    background-color: #f8f8f8;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.edit-image-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.edit-image-item:hover img {
+    transform: scale(1.05);
+}
+
+.image-number {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    background-color: rgba(0,0,0,0.6);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.875rem;
+}
+
+.file-input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    .edit-images-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+
+    .edit-image-item {
+        aspect-ratio: 3/2;
+        max-height: 180px;
+    }
+
+    .image-number {
+        font-size: 0.75rem;
+        padding: 2px 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .edit-images-container {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .edit-image-item {
+        aspect-ratio: 16/9;
+        max-height: 150px;
+    }
+
+    .form-group {
+        margin-bottom: 0.75rem;
+    }
+
+    .file-input {
+        padding: 0.375rem;
+    }
+}
+
+/* Add specific small phone sizes */
+@media (max-width: 360px) {
+    .edit-image-item {
+        max-height: 120px;
+    }
+
+    .image-number {
+        font-size: 0.7rem;
+        padding: 2px 4px;
+    }
+}
+        </style>
 
 
         <div class="property-header">
@@ -63,14 +161,17 @@
                     <div class="invalid-feedback">Please provide a description</div>
                 </div>
                 
-          <div class="edit-images-row">
-            <% (Array.isArray(data.image) ? data.image : [data.image]).forEach(function(img, idx) { %>
-                <div class="edit-image-item">
-                    <img src="<%= img.url ? img.url : img %>" alt="Listing Image <%= idx+1 %>" style="height:100px;border-radius:8px;">
-                    <!-- Optionally, add a checkbox to remove/replace this image -->
-                </div>
-            <% }); %>
-        </div>
+    <div class="form-group">
+    <label>Current Images:</label>
+    <div class="edit-images-container">
+        <% (Array.isArray(data.image) ? data.image : [data.image]).forEach(function(img, idx) { %>
+            <div class="edit-image-item">
+                <img src="<%= img.url ? img.url : img %>" alt="Listing Image <%= idx+1 %>">
+                <span class="image-number">Image <%= idx+1 %></span>
+            </div>
+        <% }); %>
+    </div>
+</div>
 
                 <div class="form-group">
                  <label>Upload 5 new images (will replace all old images):</label>

@@ -56,7 +56,6 @@
 document.querySelector('.auth-form').addEventListener('submit', function(e) {
     const emailInput = document.getElementById('email');
     const email = emailInput.value.trim();
-    // Regex for common TLDs (add more if needed)
     const tldRegex = /^[^@]+@[^@]+\.(com|net|org|in|edu|gov|io|co\.in)$/i;
     if (!tldRegex.test(email)) {
         e.preventDefault();

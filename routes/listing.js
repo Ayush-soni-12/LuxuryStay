@@ -63,10 +63,7 @@ router.route("/:id/:location")
         wrapAsync(listingcontrollers.delete)
     );
 
-    // .................................. chatBot route ............................
 
-router.get("/api",validToken,wrapAsync(listingcontrollers.chatbot))
-router.post("/chat",validToken,wrapAsync(listingcontrollers.gpt))
 
 // .................................. contact route ............................
 router.get("/contact",wrapAsync(listingcontrollers.contact))
