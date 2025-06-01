@@ -107,7 +107,8 @@ Also, I want to mention that I took help from AI (like ChatGPT,COPILOT,DEEPSEEK)
 * AWS EC2
 * AWS ECR
 * NGINX + Certbot
-
+* Domain: `luxurystays.site`, Purchased From: Godaddy
+* Elastic IP 
 
 ## Future Plans
 
